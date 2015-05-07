@@ -19,16 +19,14 @@ public class PersonaDao{
     
     private SessionFactory sessionFactory;
 
-    public <T> T save(final T o){
+    public <T> Serializable save(final T o){
       //return (T) sessionFactory.getCurrentSession().save(o);
         final Session session = HibernateUtil.sessionFactory.openSession();
         Transaction tx = null;
-        Serializable rowId;
+        Serializable identity=0;
         try {
             tx = session.beginTransaction();                
-            //session.refresh(o);
-            session.flush();
-            rowId=session.save(o);             
+            identity=session.save(o);             
             tx.commit();
         }
         catch (Exception e) {
@@ -38,7 +36,7 @@ public class PersonaDao{
         finally {
             session.close();
         }
-        return (T) rowId;
+        return identity;
     }
 
     public void delete(final Object object){
@@ -75,12 +73,22 @@ public class PersonaDao{
     
     public <T> List<T> getByNombreApellido(final String nombre, final String apellido) {
       //final Session session = sessionFactory.getCurrentSession();
-      final Session session = HibernateUtil.sessionFactory.openSession();
-      final Criteria crit = session.createCriteria(nombre, apellido);
+      final Session session = HibernateUtil.sessionFactory.openSession();      
       String sql = "from Persona p where p.nombre = ? and p.apellido = ?";
       List result = session.createQuery(sql)
       .setString(0, nombre)
       .setParameter(1, apellido)
+      .list();      
+      return result;
+    }
+    
+    public <T> List<T> getByUsuarioPassword(final String usuario, final String password) {
+      //final Session session = sessionFactory.getCurrentSession();
+      final Session session = HibernateUtil.sessionFactory.openSession();      
+      String sql = "from Persona p where p.usuario = ? and p.password = ?";
+      List result = session.createQuery(sql)
+      .setString(0, usuario)
+      .setParameter(1, password)
       .list();      
       return result;
     }

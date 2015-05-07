@@ -5,6 +5,7 @@
  */
 package my.workmonitor;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.swing.JOptionPane;
 import my.dao.HibernateUtil;
@@ -173,18 +174,22 @@ public class RegisterUI extends javax.swing.JDialog {
         List<Persona> personas=personaDao.getByNombreApellido(nombre, apellido);
         
         if(!personas.isEmpty()){
-            JOptionPane.showMessageDialog(null, "Ya existe una persona con este nombre y este apellido");   
+            JOptionPane.showMessageDialog(null, "Ya existe una persona con este nombre y este apellido"); 
+            jTextField1.setText(""); ;
+            jTextField2.setText("");
+            jTextField3.setText("");
+            jPasswordField4.setText("");            
             return;
-        }                
-        
-        personaDao.save(persona);
-        
-        /*
-        if(personaDao.save(persona).){
+        }                                
+                 
+        if(personaDao.save(persona)==(Serializable)0){
             JOptionPane.showMessageDialog(null, "Error al ingresar usuario. No se ha podido ingresar");   
+            jTextField1.setText(""); ;
+            jTextField2.setText("");
+            jTextField3.setText("");
+            jPasswordField4.setText("");  
             return;
-        }
-        */
+        }        
         
         JOptionPane.showMessageDialog(null, "El usuario se ha ingresado correctamente");   
         this.dispose();

@@ -8,6 +8,8 @@
     <property name="hibernate.connection.url">jdbc:derby://localhost:1527/Trabajo</property>
     <property name="hibernate.connection.username">sigges</property>
     <property name="hibernate.connection.password">sigges</property>
+    <property name="hibernate.default_schema">APP</property>    
+    <property name="hibernate.show_sql">true</property>
     <mapping resource="my/entity/Tarea.hbm.xml"/>
     <mapping resource="my/entity/Persona.hbm.xml"/>
     <mapping resource="my/entity/TareaActividad.hbm.xml"/>

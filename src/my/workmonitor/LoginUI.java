@@ -6,12 +6,19 @@
 package my.workmonitor;
 
 import java.awt.Cursor;
+import java.util.List;
+import javax.swing.JOptionPane;
+import my.dao.PersonaDao;
+import my.entity.Persona;
+import security.PasswordHelper;
 
 /**
  *
  * @author Diego
  */
 public class LoginUI extends javax.swing.JDialog {
+    
+    private static PersonaDao personaDao= new PersonaDao();
 
     /**
      * Creates new form LoginUI
@@ -55,6 +62,11 @@ public class LoginUI extends javax.swing.JDialog {
         jLabel3.setText("Password");
 
         jButton1.setText("Ingresar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(0, 0, 238));
@@ -129,6 +141,41 @@ public class LoginUI extends javax.swing.JDialog {
         registerUI.setVisible(true);
         //registerUI.setF
     }//GEN-LAST:event_jLabel4MouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        String usuario=jTextField1.getText().toString();
+        String password=jTextField2.getText().toString();                        
+        PasswordHelper passwordHelper=new PasswordHelper();
+        
+        if(usuario.equals("")){
+            JOptionPane.showMessageDialog(null, "Debe ingresar su nombre de usuario");
+            return;
+        }
+        if(password.equals("")){
+            JOptionPane.showMessageDialog(null, "Debe ingresar su password");        
+            return;
+        }        
+                
+        List<Persona> personas=personaDao.getByUsuarioPassword(usuario,passwordHelper.encriptarMD5base64(password));
+
+        if(personas.size()==0){
+            JOptionPane.showMessageDialog(null, "No existe el usuario o el password es incorrecto");
+            jTextField1.setText(""); 
+            jTextField2.setText("");            
+            return;
+        }
+        if(personas.size()>1){
+            JOptionPane.showMessageDialog(null, "Existe mas de un usuario con este usuario y este password");
+            jTextField1.setText(""); 
+            jTextField2.setText("");
+            return;            
+        }
+        if(personas.size()==1){
+            WorkMonitorUI workMonitorUI=new WorkMonitorUI(personas.get(0).getId());
+            workMonitorUI.setVisible(true);  
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
