@@ -15,9 +15,7 @@ import org.hibernate.context.internal.ThreadLocalSessionContext;
  * @author Diego
  */
 
-public class PersonaDao{
-    
-    private SessionFactory sessionFactory;
+public class PersonaDao{        
 
     public <T> Serializable save(final T o){
       //return (T) sessionFactory.getCurrentSession().save(o);
@@ -45,7 +43,7 @@ public class PersonaDao{
     }
 
     /***/
-    public <T> T get(final Class<T> type, final Long id){
+    public <T> T get(final Class<T> type, final Integer id){
       //return (T) sessionFactory.getCurrentSession().get(type, id);
       return (T) HibernateUtil.sessionFactory.openSession().get(type, id);
     }

@@ -43,7 +43,7 @@ public class LoginUI extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        jPasswordField2 = new javax.swing.JPasswordField();
         jButton1 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
 
@@ -98,7 +98,7 @@ public class LoginUI extends javax.swing.JDialog {
                         .addComponent(jLabel4))
                     .addComponent(jLabel3)
                     .addComponent(jTextField1)
-                    .addComponent(jTextField2))
+                    .addComponent(jPasswordField2))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -112,7 +112,7 @@ public class LoginUI extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -145,7 +145,7 @@ public class LoginUI extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         String usuario=jTextField1.getText().toString();
-        String password=jTextField2.getText().toString();                        
+        String password=jPasswordField2.getText().toString();                        
         PasswordHelper passwordHelper=new PasswordHelper();
         
         if(usuario.equals("")){
@@ -162,18 +162,18 @@ public class LoginUI extends javax.swing.JDialog {
         if(personas.size()==0){
             JOptionPane.showMessageDialog(null, "No existe el usuario o el password es incorrecto");
             jTextField1.setText(""); 
-            jTextField2.setText("");            
+            jPasswordField2.setText("");            
             return;
         }
         if(personas.size()>1){
             JOptionPane.showMessageDialog(null, "Existe mas de un usuario con este usuario y este password");
             jTextField1.setText(""); 
-            jTextField2.setText("");
+            jPasswordField2.setText("");
             return;            
         }
         if(personas.size()==1){
             WorkMonitorUI workMonitorUI=new WorkMonitorUI(personas.get(0).getId());
-            workMonitorUI.setVisible(true);  
+            workMonitorUI.setVisible(true);            
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -207,7 +207,7 @@ public class LoginUI extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                LoginUI dialog = new LoginUI(new javax.swing.JFrame(), true);
+                LoginUI dialog = new LoginUI(new javax.swing.JFrame(), false);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -226,8 +226,8 @@ public class LoginUI extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JOptionPane jOptionPane1;
+    private javax.swing.JTextField jPasswordField2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 }
