@@ -28,22 +28,32 @@ public class Timer {
     public Integer tareaActual;
     public Integer actividadActual;    
     protected Calendar instante;
-    protected boolean activo=false;
+    public boolean activo=false;
     protected HhDao hhDao=new HhDao();
 
     Timer(){
         
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
-            public void run() {
-                if(activo){
+            public void run() {                
+                if(activo){                   
                    instante= Calendar.getInstance();
                    
                    int hora=instante.get(Calendar.HOUR_OF_DAY);
                    int minuto=instante.get(Calendar.MINUTE);
                    
+                   System.out.println("hora="+hora);
+                   System.out.println("minuto="+minuto);
+                   
                    if(Arrays.asList(9,10,11,12,13,14,15,16,17,18,19,20,21,22,23).contains(hora)){
                        if(Arrays.asList(0,30).contains(minuto)){
+                           if(minuto==0){
+                               hora--;
+                               minuto=30;
+                           }
+                           else
+                               minuto=0;
+                           
                            Hh hh= new Hh();
                            hh.setDia(instante.getTime());
                            hh.setHora(instante.getTime());
@@ -55,9 +65,7 @@ public class Timer {
                    }
                 }
             }
-        }, 0, 1, TimeUnit.MINUTES);
-        
-        exec.submit();
+        }, 0, 1, TimeUnit.MINUTES);                
     }
 
     public void setTareaActual(Integer tareaActual){

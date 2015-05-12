@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.io.Serializable;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import my.dao.ActividadDao;
 import my.dao.PersonaDao;
@@ -399,18 +400,27 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jList2.setModel(new javax.swing.AbstractListModel() {
             List<Actividad> actividades=actividadDao.getByTipoTarea(jList1.getSelectedValue().toString());
             public int getSize() { return actividades.size(); }
-            public Object getElementAt(int i) { return actividades.get(i).getNombre(); }
+            public Object getElementAt(int i) { return actividades.get(i); }
         });
         
         jList3.setModel(new javax.swing.AbstractListModel() {
             List<Tarea> tareas=tareaDao.getByTipoTarea(jList1.getSelectedValue().toString());
             public int getSize() { return tareas.size(); }
-            public Object getElementAt(int i) { return tareas.get(i).getNombre(); }
+            public Object getElementAt(int i) { return tareas.get(i); }
         });
     }//GEN-LAST:event_jList1ValueChanged
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
         // TODO add your handling code here:
+        if(jList2.getSelectedValue()==null){
+            JOptionPane.showMessageDialog(null, "Debe seleccionar una actividad");   
+            return;
+        }
+        if(jList3.getSelectedValue()==null){
+            JOptionPane.showMessageDialog(null, "Debe seleccionar una tarea");   
+            return;
+        }
+        System.out.println(jList2.getSelectedValue());
         Actividad actividad=(Actividad)jList2.getSelectedValue();
         Tarea tarea=(Tarea)jList3.getSelectedValue();
         timer.setActividadActual(actividad.getId());

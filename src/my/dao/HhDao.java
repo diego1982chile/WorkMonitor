@@ -81,8 +81,8 @@ public class HhDao {
       Calendar c1 = Calendar.getInstance();
       Calendar c2 = Calendar.getInstance();
       c1.setTime(fecha);
-      c2.setTime(fecha);
-      int dayOfWeek = c1.get(Calendar.DAY_OF_WEEK);      
+      c2.setTime(fecha);      
+      int dayOfWeek = c1.get(Calendar.DAY_OF_WEEK);           
       c1.add(Calendar.DATE, -dayOfWeek);  // number of days to add
       c2.add(Calendar.DATE, -dayOfWeek+5);  // number of days to add            
                   
