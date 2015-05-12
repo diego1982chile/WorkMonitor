@@ -44,8 +44,10 @@ public class Actividad  implements java.io.Serializable {
         this.descripcion = descripcion;
     }
 
-
-
+    @Override
+    public String toString() {
+        return this.getNombre();
+    }
 
 }
 

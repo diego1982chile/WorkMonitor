@@ -9,10 +9,13 @@ package my.entity;
 public class TareaActividad  implements java.io.Serializable {
 
 
-     private int id;
-     private Character comentario;
-     private Integer idTarea;
-     private Integer idActividad;
+    private int id;
+    private Character comentario;    
+     
+    private Integer idTarea;
+    private Integer idActividad; 
+    private TipoTarea tarea;
+    private Actividad actividad;
 
     public TareaActividad() {
     }
@@ -57,9 +60,23 @@ public class TareaActividad  implements java.io.Serializable {
         this.idActividad = idActividad;
     }
 
-
-
-
+    
+    public TipoTarea getTarea(){
+        return this.tarea;
+    }
+    
+    public void setTarea(TipoTarea tarea){
+        this.tarea=tarea;
+    }
+    
+    public Actividad getActividad(){
+        return this.actividad;
+    }
+    
+    public void setActividad(Actividad actividad){
+        this.actividad=actividad;
+    }    
+    
 }
 
 

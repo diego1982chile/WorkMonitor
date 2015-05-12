@@ -1,6 +1,11 @@
 package my.entity;
 // Generated 04-05-2015 19:37:31 by Hibernate Tools 4.3.1
 
+import java.util.HashSet;
+import java.util.List;
+import org.hibernate.mapping.Set;
+
+
 
 
 /**
@@ -12,10 +17,11 @@ public class TipoTarea  implements java.io.Serializable {
      private int id;
      private String nombre;
      private String descripcion;
+     
+    // private Set actividades;//= new HashSet(0);
 
     public TipoTarea() {
     }
-
 	
     public TipoTarea(int id, String nombre) {
         this.id = id;
@@ -48,9 +54,21 @@ public class TipoTarea  implements java.io.Serializable {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+    
+    @Override
+    public String toString() {
+        return this.getNombre();
+    }
 
-
-
+    /*
+    public Set getActividades() {
+        return this.actividades;
+    }
+        
+    public void setActividades(Set actividades){
+        this.actividades=actividades;
+    }     
+    */
 
 }
 

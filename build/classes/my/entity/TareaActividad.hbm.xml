@@ -10,12 +10,18 @@
         </id>
         <property name="comentario" type="java.lang.Character">
             <column name="COMENTARIO" length="1" />
-        </property>
+        </property>                  
         <property name="idTarea" type="java.lang.Integer">
-            <column name="ID_TAREA" />
+            <column name="ID_TIPO_TAREA" />
         </property>
         <property name="idActividad" type="java.lang.Integer">
             <column name="ID_ACTIVIDAD" />
-        </property>
+        </property>      
+        <many-to-one name="actividad" class="my.entity.Actividad" fetch="select" insert="false" update="false">
+            <column name="ID_ACTIVIDAD" />
+        </many-to-one>        
+        <many-to-one name="tarea" class="my.entity.TipoTarea" fetch="select" insert="false" update="false">
+             <column name="ID_TIPO_TAREA" />
+        </many-to-one>          
     </class>
 </hibernate-mapping>

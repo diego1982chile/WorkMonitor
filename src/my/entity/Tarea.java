@@ -13,6 +13,8 @@ public class Tarea  implements java.io.Serializable {
      private String nombre;
      private String comentario;
      private Integer idTipoTarea;
+     
+     private TipoTarea tipoTarea;
 
     public Tarea() {
     }
@@ -58,9 +60,18 @@ public class Tarea  implements java.io.Serializable {
         this.idTipoTarea = idTipoTarea;
     }
 
+    public TipoTarea getTipoTarea(){
+        return this.tipoTarea;
+    }
+    
+    public void setTipoTarea(TipoTarea tipoTarea){
+        this.tipoTarea=tipoTarea;
+    }
 
-
-
+    @Override
+    public String toString() {
+        return this.getNombre();
+    }
 }
 
 

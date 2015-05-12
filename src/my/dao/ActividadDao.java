@@ -70,13 +70,12 @@ public class ActividadDao {
       return crit.list();
     }    
     
-    public <T> List<T> getByTipoTarea(final int idTipoTarea) {
+    public <T> List<T> getByTipoTarea(final String tipoTarea) {
       //final Session session = sessionFactory.getCurrentSession();
       final Session session = HibernateUtil.sessionFactory.openSession();      
-      String sql = "from Actividad a where p. = ? and p.apellido = ?";
+      String sql = "select a from TareaActividad ta inner join ta.actividad a inner join ta.tarea t where t.nombre = ?";
       List result = session.createQuery(sql)
-      .setString(0, nombre)
-      .setParameter(1, apellido)
+      .setString(0, tipoTarea)      
       .list();      
       return result;
     }

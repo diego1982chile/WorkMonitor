@@ -14,5 +14,11 @@
         <property name="descripcion" type="string">
             <column name="DESCRIPCION" length="127" />
         </property>
+        <!--set name="actividades" inverse="true">
+            <key>
+                <column name="ID" />
+            </key>
+            <one-to-many class="my.entity.TareaActividad" />
+        </set-->        
     </class>
 </hibernate-mapping>

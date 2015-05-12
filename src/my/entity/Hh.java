@@ -17,6 +17,8 @@ public class Hh  implements java.io.Serializable {
      private Integer idPersona;
      private Integer idTarea;
      private Integer idActividad;
+     
+     private Tarea tarea;
 
     public Hh() {
     }
@@ -86,9 +88,19 @@ public class Hh  implements java.io.Serializable {
     public void setIdActividad(Integer idActividad) {
         this.idActividad = idActividad;
     }
+    
+    public Tarea getTarea(){
+        return this.tarea;
+    }
+    
+    public void setTarea(Tarea tarea){
+        this.tarea=tarea;
+    }
 
-
-
+    @Override
+    public String toString() {
+        return this.getTarea().getNombre();
+    }
 
 }
 

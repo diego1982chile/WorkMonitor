@@ -26,5 +26,8 @@
         <property name="idActividad" type="java.lang.Integer">
             <column name="ID_ACTIVIDAD" />
         </property>
+        <many-to-one name="tarea" class="my.entity.Tarea" fetch="select" insert="false" update="false">
+             <column name="ID_TAREA" />
+        </many-to-one>           
     </class>
 </hibernate-mapping>

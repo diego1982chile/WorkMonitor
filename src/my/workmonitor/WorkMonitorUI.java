@@ -9,11 +9,14 @@ import java.awt.Component;
 import java.io.Serializable;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.ListSelectionModel;
 import my.dao.ActividadDao;
 import my.dao.PersonaDao;
+import my.dao.TareaDao;
 import my.dao.TipoTareaDao;
 import my.entity.Actividad;
 import my.entity.Persona;
+import my.entity.Tarea;
 import my.entity.TipoTarea;
 
 /**
@@ -22,9 +25,12 @@ import my.entity.TipoTarea;
  */
 public class WorkMonitorUI extends javax.swing.JFrame {
 
+    private static Persona persona=new Persona();
     private static PersonaDao personaDao= new PersonaDao();
     private static TipoTareaDao tipoTareaDao= new TipoTareaDao();
+    private static TareaDao tareaDao= new TareaDao();
     DefaultListModel model;
+    private static Timer timer= new Timer();
     //private static PersonaDao personaDao= new PersonaDao();
     /**
      * Creates new form WorkMonitorUI
@@ -35,11 +41,10 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     
     public WorkMonitorUI(Serializable idPersona) {
         initComponents();
-        model = new DefaultListModel();
-        
-        Persona persona=personaDao.get(Persona.class ,(Integer)idPersona);        
+        model = new DefaultListModel();        
+        persona=personaDao.get(Persona.class ,(Integer)idPersona);        
         jLabel7.setText(persona.getUsuario().toString());
-        List<TipoTarea> tiposTarea=tipoTareaDao.getAll(TipoTarea.class);
+        List<TipoTarea> tiposTarea=tipoTareaDao.getAll(TipoTarea.class);        
         //for(int i=0;i<tiposTarea.size();++i)
             //jList1.add(tiposTarea.get(i).getNombre());        
     }    
@@ -83,6 +88,8 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
         jButton11 = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -95,25 +102,35 @@ public class WorkMonitorUI extends javax.swing.JFrame {
 
             List<TipoTarea> tiposTarea=tipoTareaDao.getAll(TipoTarea.class);
             public int getSize() { return tiposTarea.size(); }
-            public Object getElementAt(int i) { return tiposTarea.get(i).getNombre(); }
+            //public Object getElementAt(int i) { return tiposTarea.get(i).getNombre; }
+            public Object getElementAt(int i) { return tiposTarea.get(i); }
+        });
+        jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                jList1ValueChanged(evt);
+            }
         });
         jScrollPane1.setViewportView(jList1);
 
         ActividadDao actividadDao=new ActividadDao();
+        jList2.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jList2.setModel(new javax.swing.AbstractListModel() {
-            List<Actividad> actividades=actividadDao.getByTipoTarea(Actividad.class);
+            List<Actividad> actividades=actividadDao.getByTipoTarea("");
             public int getSize() { return actividades.size(); }
-            public Object getElementAt(int i) { return actividades.get(i).getNombre(); }
+            //public Object getElementAt(int i) { return actividades.get(i).getNombre(); }
+            public Object getElementAt(int i) { return actividades.get(i); }
         });
         jScrollPane2.setViewportView(jList2);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1.setText("Tipo");
 
+        TareaDao tareaDao= new TareaDao();
+        jList3.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jList3.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
+            List<Tarea> tareas=tareaDao.getByTipoTarea("");
+            public int getSize() { return tareas.size(); }
+            public Object getElementAt(int i) { return tareas.get(i).getNombre(); }
         });
         jScrollPane3.setViewportView(jList3);
 
@@ -124,24 +141,34 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jLabel3.setText("Activs.");
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jLabel4.setText("Horas Hombre");
+        jLabel4.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
         jButton2.setText("Aplicar");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton2MouseClicked(evt);
+            }
+        });
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
+        jTable1.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        jTable1.setCellSelectionEnabled(true);
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
+
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Horario", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
             }
         ));
         jScrollPane4.setViewportView(jTable1);
@@ -157,6 +184,11 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jTextField2.setText("jTextField2");
 
         jButton3.setText("Detener");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton3MouseClicked(evt);
+            }
+        });
 
         jButton4.setText("<< Anterior");
 
@@ -216,6 +248,12 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jButton11.setMinimumSize(new java.awt.Dimension(1, 1));
         jButton11.setPreferredSize(new java.awt.Dimension(37, 20));
 
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel8.setText("Año");
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel9.setText("Mes");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -239,25 +277,28 @@ public class WorkMonitorUI extends javax.swing.JFrame {
                         .addGap(4, 4, 4)
                         .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(2, 2, 2)
                         .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
-                        .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
-                        .addComponent(jScrollPane3)))
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jButton4)
+                                .addGap(50, 50, 50)
+                                .addComponent(jLabel8)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
+                                .addComponent(jLabel9))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -266,18 +307,14 @@ public class WorkMonitorUI extends javax.swing.JFrame {
                         .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(25, 25, 25)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton6))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton5))))
+                            .addComponent(jButton6, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING)))
                     .addComponent(jScrollPane4)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField1))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField2)))
@@ -317,7 +354,9 @@ public class WorkMonitorUI extends javax.swing.JFrame {
                                     .addComponent(jButton4)
                                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jButton5)
-                                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel9))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                             .addComponent(jScrollPane3))
@@ -348,6 +387,42 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
+        // TODO add your handling code here:
+        ActividadDao actividadDao=new ActividadDao();
+        //Actividad actividad= (Actividad)jList1.getSelectedValue();
+        //System.out.println("tipoTarea="+jList1.getSelectedValue() );
+        TipoTarea tipoTarea= (TipoTarea)jList1.getSelectedValue();
+        //System.out.println("tipoTarea="+tipoTarea.getId());
+        
+        jList2.setModel(new javax.swing.AbstractListModel() {
+            List<Actividad> actividades=actividadDao.getByTipoTarea(jList1.getSelectedValue().toString());
+            public int getSize() { return actividades.size(); }
+            public Object getElementAt(int i) { return actividades.get(i).getNombre(); }
+        });
+        
+        jList3.setModel(new javax.swing.AbstractListModel() {
+            List<Tarea> tareas=tareaDao.getByTipoTarea(jList1.getSelectedValue().toString());
+            public int getSize() { return tareas.size(); }
+            public Object getElementAt(int i) { return tareas.get(i).getNombre(); }
+        });
+    }//GEN-LAST:event_jList1ValueChanged
+
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        // TODO add your handling code here:
+        Actividad actividad=(Actividad)jList2.getSelectedValue();
+        Tarea tarea=(Tarea)jList3.getSelectedValue();
+        timer.setActividadActual(actividad.getId());
+        timer.setTareaActual(tarea.getId());
+        timer.setPersonaActual(persona.getId());
+        timer.setActivo(true);                
+    }//GEN-LAST:event_jButton2MouseClicked
+
+    private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
+        // TODO add your handling code here:
+        timer.setActivo(false);
+    }//GEN-LAST:event_jButton3MouseClicked
 
     /**
      * @param args the command line arguments
@@ -405,6 +480,8 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JList jList1;
     private javax.swing.JList jList2;
     private javax.swing.JList jList3;
