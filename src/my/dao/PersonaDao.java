@@ -24,7 +24,7 @@ public class PersonaDao{
         Serializable identity=0;
         try {
             tx = session.beginTransaction();                
-            identity=session.save(o);             
+            identity=session.save(o);                
             tx.commit();
         }
         catch (Exception e) {

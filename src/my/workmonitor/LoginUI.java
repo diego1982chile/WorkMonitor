@@ -7,6 +7,7 @@ package my.workmonitor;
 
 import java.awt.Cursor;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.JOptionPane;
 import my.dao.PersonaDao;
 import my.entity.Persona;
@@ -181,6 +182,8 @@ public class LoginUI extends javax.swing.JDialog {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        
+        Locale.setDefault(new Locale("es_CL"));  
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

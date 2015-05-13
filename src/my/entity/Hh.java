@@ -2,6 +2,7 @@ package my.entity;
 // Generated 04-05-2015 19:37:31 by Hibernate Tools 4.3.1
 
 
+import java.sql.Time;
 import java.util.Date;
 
 /**
@@ -12,7 +13,7 @@ public class Hh  implements java.io.Serializable {
 
      private int id;
      private Date dia;
-     private Date hora;
+     private Time hora;
      private String comentario;
      private Integer idPersona;
      private Integer idTarea;
@@ -24,12 +25,12 @@ public class Hh  implements java.io.Serializable {
     }
 
 	
-    public Hh(int id, Date dia, Date hora) {
+    public Hh(int id, Date dia, Time hora) {
         this.id = id;
         this.dia = dia;
         this.hora = hora;
     }
-    public Hh(int id, Date dia, Date hora, String comentario, Integer idPersona, Integer idTarea, Integer idActividad) {
+    public Hh(int id, Date dia, Time hora, String comentario, Integer idPersona, Integer idTarea, Integer idActividad) {
        this.id = id;
        this.dia = dia;
        this.hora = hora;
@@ -53,11 +54,11 @@ public class Hh  implements java.io.Serializable {
     public void setDia(Date dia) {
         this.dia = dia;
     }
-    public Date getHora() {
+    public Time getHora() {
         return this.hora;
     }
     
-    public void setHora(Date hora) {
+    public void setHora(Time hora) {
         this.hora = hora;
     }
     public String getComentario() {

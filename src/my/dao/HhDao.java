@@ -6,6 +6,7 @@
 package my.dao;
 
 import java.io.Serializable;
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,8 +25,8 @@ import org.hibernate.context.internal.ThreadLocalSessionContext;
  */
 public class HhDao {
     
-       public <T> Serializable save(final T o){
-      //return (T) sessionFactory.getCurrentSession().save(o);
+    public <T> Serializable save(final T o){
+       //return (T) sessionFactory.getCurrentSession().save(o);
         final Session session = HibernateUtil.sessionFactory.openSession();
         Transaction tx = null;
         Serializable identity=0;
@@ -42,6 +43,24 @@ public class HhDao {
             session.close();
         }
         return identity;
+    }
+    
+    public <T> void update(final T o){
+       //return (T) sessionFactory.getCurrentSession().save(o);
+        final Session session = HibernateUtil.sessionFactory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();                
+            session.update(o);             
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            throw e;
+        }
+        finally {
+            session.close();
+        }        
     }
 
     public void delete(final Object object){
@@ -63,8 +82,22 @@ public class HhDao {
 
     /***/
     public <T> void saveOrUpdate(final T o){
-      //sessionFactory.getCurrentSession().saveOrUpdate(o);
-      HibernateUtil.sessionFactory.openSession().saveOrUpdate(o);
+      //sessionFactory.getCurrentSession().saveOrUpdate(o);     
+        final Session session = HibernateUtil.sessionFactory.openSession();
+        Transaction tx = null;
+        
+        try {
+            tx = session.beginTransaction();                
+            HibernateUtil.sessionFactory.openSession().saveOrUpdate(o);             
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            throw e;
+        }
+        finally {
+            session.close();
+        }              
     }
 
     public <T> List<T> getAll(final Class<T> type) {      
@@ -102,13 +135,26 @@ public class HhDao {
           min1=(i%2)%30;
           min2=((i+1)%2)%30;
           for(int j=0;j<5;++j){              
-            hh.put(String.format("%03d",i)+":"+String.format("%03d",min1)+"-"+
-                   String.format("%03d",i)+":"+String.format("%03d",min2),result.get(cont));
+            hh.put(String.format("%02d",i)+":"+String.format("%02d",min1)+"-"+
+                   String.format("%02d",i)+":"+String.format("%02d",min2),result.get(cont));
             cont++;
           }
       }
       return hh;
     }
         
-    
+    public <T> List<T> getByHh(final Date dia, final Time hora, final Integer id_persona) {      
+      //final Session session = HibernateUtil.sessionFactory.getCurrentSession();
+      final Session session = HibernateUtil.sessionFactory.openSession();      
+      //final Session session = HibernateUtil.getSession(sessionFactory);    
+
+      String sql = "from Hh where dia=:dia and hora=:hora and id_persona=:id_persona";      
+
+      List result = session.createQuery(sql)
+      .setDate("dia",dia)            
+      .setTime("hora",hora)    
+      .setInteger("id_persona",id_persona)    
+      .list();   
+      return result;
+    }           
 }

@@ -6,7 +6,7 @@
     <class name="my.entity.Hh" table="HH" schema="APP" optimistic-lock="version">
         <id name="id" type="int">
             <column name="ID" />
-            <generator class="assigned" />
+            <generator class="increment" />
         </id>
         <property name="dia" type="date">
             <column name="DIA" length="10" not-null="true" unique="true" />
