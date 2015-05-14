@@ -18,6 +18,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.context.internal.ThreadLocalSessionContext;
+import org.hibernate.mapping.Set;
 
 /**
  *
@@ -50,8 +51,12 @@ public class HhDao {
         final Session session = HibernateUtil.sessionFactory.openSession();
         Transaction tx = null;
         try {
-            tx = session.beginTransaction();                
-            session.update(o);             
+            tx = session.beginTransaction();                                                   
+            //session.refresh(o);  
+            Hh hh=(Hh)o;                    
+            //System.out.println("Hh={"+hh.getId()+","+hh.getDia()+","+hh.getHora()+","+hh.getIdPersona()+","+hh.getIdTarea()+","+hh.getIdActividad()+"}");                            
+            session.flush();                
+            session.update(o);                                                                                    
             tx.commit();
         }
         catch (Exception e) {
@@ -75,9 +80,23 @@ public class HhDao {
     }
 
     /***/
-    public <T> T merge(final T o)   {
+    public <T> void merge(final T o)   {
       //return (T) sessionFactory.getCurrentSession().merge(o);
-      return (T) HibernateUtil.sessionFactory.openSession().merge(o);
+      //return (T) HibernateUtil.sessionFactory.openSession().merge(o);
+        final Session session = HibernateUtil.sessionFactory.openSession();        
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();                
+            session.merge(o);             
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            throw e;
+        }
+        finally {
+            session.close();
+        }         
     }
 
     /***/
@@ -109,38 +128,58 @@ public class HhDao {
       return crit.list();
     }    
     
-    public <T> HashMap getBySemana(final Date fecha) {
+    public <T> Object[][] getBySemana(final Date fecha) {
       //final Session session = sessionFactory.getCurrentSession();            
       Calendar c1 = Calendar.getInstance();
       Calendar c2 = Calendar.getInstance();
       c1.setTime(fecha);
       c2.setTime(fecha);      
       int dayOfWeek = c1.get(Calendar.DAY_OF_WEEK);           
-      c1.add(Calendar.DATE, -dayOfWeek);  // number of days to add
-      c2.add(Calendar.DATE, -dayOfWeek+5);  // number of days to add            
+      c1.add(Calendar.DATE, -dayOfWeek+1);  // number of days to add
+      c2.add(Calendar.DATE, -dayOfWeek+6);  // number of days to add                  
                   
       final Session session = HibernateUtil.sessionFactory.openSession();      
-      String sql = "select hh. from Hh hh inner join hh.tarea t where hh.dia between ? and ? order by dia, hora";
+      String sql = "select hh from Hh hh inner join hh.tarea t where hh.dia between ? and ? order by dia, hora";
       List result = session.createQuery(sql)
       .setDate(0, c1.getTime())      
       .setDate(1, c2.getTime())        
       .list();
+                    
+      Object[][] matrizHh = new Object[29][5];
       
-      HashMap hh=new HashMap<String,Hh>();
+      Calendar dia= Calendar.getInstance();
       
-      int cont=0;
-      int min1,min2;
+      dia.set(Calendar.DAY_OF_WEEK,2);
       
-      for(int i=0;i<13;++i){
-          min1=(i%2)%30;
-          min2=((i+1)%2)%30;
-          for(int j=0;j<5;++j){              
-            hh.put(String.format("%02d",i)+":"+String.format("%02d",min1)+"-"+
-                   String.format("%02d",i)+":"+String.format("%02d",min2),result.get(cont));
-            cont++;
+      Calendar hora= Calendar.getInstance();
+      //instante.set(Calendar.DAY_OF_MONTH,1);
+      hora.set(Calendar.HOUR_OF_DAY, 9);
+      hora.set(Calendar.MINUTE, 0);
+      hora.set(Calendar.SECOND,0);
+            
+      SimpleDateFormat sdfDia=new SimpleDateFormat("yyyy-MM-dd");      
+      SimpleDateFormat sdfHora=new SimpleDateFormat("HH:mm:ss");
+      
+      for(int i=0;i<5;++i){       
+          hora.set(Calendar.HOUR_OF_DAY, 9);
+          hora.set(Calendar.MINUTE, 0);
+          hora.set(Calendar.SECOND,0);
+          for(int j=0;j<29;++j){              
+            Hh hh=new Hh();
+            hh.setDia(dia.getTime());
+            hh.setHora(Time.valueOf(sdfHora.format(hora.getTime())));
+            int indice;            
+            //System.out.println("sdfDia.format(hh.getDia())="+sdfDia.format(hh.getDia()));            
+            //System.out.println("sdfHora.format(hora.getTime())="+sdfHora.format(hh.getHora()));
+            if((indice=result.indexOf(hh))!=-1)                
+                matrizHh[j][i]=result.get(indice);                                
+            else
+                matrizHh[j][i]=null;                   
+            hora.add(Calendar.MINUTE, 30);
           }
+          dia.add(Calendar.DAY_OF_WEEK, 1);
       }
-      return hh;
+      return matrizHh;
     }
         
     public <T> List<T> getByHh(final Date dia, final Time hora, final Integer id_persona) {      
@@ -154,7 +193,9 @@ public class HhDao {
       .setDate("dia",dia)            
       .setTime("hora",hora)    
       .setInteger("id_persona",id_persona)    
-      .list();   
+      .list(); 
+      
+      session.close();
       return result;
     }           
 }

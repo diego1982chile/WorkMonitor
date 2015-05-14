@@ -3,6 +3,7 @@ package my.entity;
 
 
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -101,6 +102,16 @@ public class Hh  implements java.io.Serializable {
     @Override
     public String toString() {
         return this.getTarea().getNombre();
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+        Hh hh=(Hh)o;
+        SimpleDateFormat sdfDia=new SimpleDateFormat("yyyy-MM-dd");      
+        SimpleDateFormat sdfHora=new SimpleDateFormat("HH:mm:ss");
+        return (sdfDia.format(this.getDia()).equals(sdfDia.format(hh.getDia())) && 
+                sdfHora.format(this.getHora()).equals(sdfHora.format(hh.getHora())));        
     }
 
 }

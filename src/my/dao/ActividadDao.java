@@ -80,4 +80,13 @@ public class ActividadDao {
       return result;
     }
     
+    public <T> List<T> getByNombre(final String nombre) {
+      //final Session session = sessionFactory.getCurrentSession();
+      final Session session = HibernateUtil.sessionFactory.openSession();      
+      String sql = "from Actividad a where a.nombre = ?";
+      List result = session.createQuery(sql)
+      .setString(0, nombre)      
+      .list();      
+      return result;
+    }   
 }

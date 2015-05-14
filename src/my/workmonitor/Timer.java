@@ -42,13 +42,6 @@ public class Timer {
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {    
-                /*
-                Hh hh2=new Hh();
-                hh2.setIdPersona(1);
-                hh2.setIdActividad(1);
-                hh2.setIdTarea(1);
-                hhDao.getByHh(hh2);
-                */
                 if(activo){                   
                    instante= Calendar.getInstance();
                    
@@ -70,27 +63,34 @@ public class Timer {
 
                         Hh hh= new Hh();
                         hh.setDia(instante.getTime());    
-                        SimpleDateFormat sdf=new SimpleDateFormat("hh:mm:ss");                        
+                        SimpleDateFormat sdf=new SimpleDateFormat("HH:mm:ss");                        
                         System.out.println(Time.valueOf(sdf.format(instante.getTime())));
                         hh.setHora(Time.valueOf(sdf.format(instante.getTime())));                             
                         hh.setIdActividad(actividadActual);
                         hh.setIdTarea(tareaActual);
                         hh.setIdPersona(personaActual);
                         
-                        List<Hh> hhList=hhDao.getByHh(hh.getDia(),hh.getHora(),hh.getIdPersona());
-                        System.out.println("PASE");
+                        List<Hh> hhList=hhDao.getByHh(hh.getDia(),hh.getHora(),hh.getIdPersona());                        
                         
                         if(hhList.isEmpty()){                               
                             System.out.println("LA LISTA ES VACIA, POR LO TANTO VOY A INSERTAR LA HH");
                             hhDao.save(hh);
                         }
                         else{
-                            System.out.println("LA LISTA NO ES VACIA, POR LO TANTO VOY A ACTUALIZAR LA HH");
-                            //hhDao.update(hh);
-                            hh.setIdTarea(tareaActual);
-                            hh.setIdActividad(actividadActual);
+                            System.out.println("LA LISTA NO ES VACIA, POR LO TANTO VOY A ACTUALIZAR LA HH");  
+                            System.out.println("{"+personaActual+","+tareaActual+","+actividadActual+"}");  
+                            hhList.get(0).setIdActividad(actividadActual);
+                            hhList.get(0).setIdTarea(tareaActual);
+                            hhList.get(0).setIdPersona(personaActual);                            
+                            hhDao.update(hhList.get(0));
                         }
-                       //}
+                        WorkMonitorUI.jTable1.setModel(new javax.swing.table.DefaultTableModel(
+                            hhDao.getBySemana(new Date())
+                            ,
+                            new String [] {
+                                "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
+                            }
+                        ));
                    }
                 }
             }

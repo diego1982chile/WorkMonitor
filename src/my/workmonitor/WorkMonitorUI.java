@@ -5,17 +5,27 @@
  */
 package my.workmonitor;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.io.Serializable;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.MatteBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import my.dao.ActividadDao;
+import my.dao.HhDao;
 import my.dao.PersonaDao;
 import my.dao.TareaDao;
 import my.dao.TipoTareaDao;
 import my.entity.Actividad;
+import my.entity.Hh;
 import my.entity.Persona;
 import my.entity.Tarea;
 import my.entity.TipoTarea;
@@ -29,8 +39,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     private static Persona persona=new Persona();
     private static PersonaDao personaDao= new PersonaDao();
     private static TipoTareaDao tipoTareaDao= new TipoTareaDao();
-    private static TareaDao tareaDao= new TareaDao();
-    DefaultListModel model;
+    private static TareaDao tareaDao= new TareaDao();    
     private static Timer timer= new Timer();
     //private static PersonaDao personaDao= new PersonaDao();
     /**
@@ -41,8 +50,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     }
     
     public WorkMonitorUI(Serializable idPersona) {
-        initComponents();
-        model = new DefaultListModel();        
+        initComponents();             
         persona=personaDao.get(Persona.class ,(Integer)idPersona);        
         jLabel7.setText(persona.getUsuario().toString());
         List<TipoTarea> tiposTarea=tipoTareaDao.getAll(TipoTarea.class);        
@@ -92,8 +100,14 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jTextField4 = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(898, 680));
+        setPreferredSize(new java.awt.Dimension(898, 680));
 
         TipoTareaDao tipoTareaDao= new TipoTareaDao();
         jList1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
@@ -144,7 +158,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jLabel4.setText("Horas Hombre");
+        jLabel4.setText("Horas Hombre:");
         jLabel4.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
         jButton2.setText("Iniciar");
@@ -159,18 +173,20 @@ public class WorkMonitorUI extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        jTable1.setCellSelectionEnabled(true);
+        HhDao hhDao=new HhDao();
+        jTable1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        Color color = UIManager.getColor("Table.gridColor");
+        MatteBorder border = new MatteBorder(1, 1, 0, 0, color);
+        jTable1.setBorder(border);
+        jTable1.setShowHorizontalLines(true);
+        jTable1.setShowVerticalLines(true);
+        jTable1.setGridColor(Color.LIGHT_GRAY);
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
 
-            new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
-            },
+            hhDao.getBySemana(new Date())
+            ,
             new String [] {
-                "Horario", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
+                "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
             }
         ));
         jScrollPane4.setViewportView(jTable1);
@@ -208,6 +224,16 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jButton1.setMaximumSize(new java.awt.Dimension(1, 1));
         jButton1.setMinimumSize(new java.awt.Dimension(1, 1));
         jButton1.setPreferredSize(new java.awt.Dimension(37, 20));
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton8.setText("-");
         jButton8.setMargin(new java.awt.Insets(1, 1, 1, 1));
@@ -238,6 +264,11 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jButton11.setMaximumSize(new java.awt.Dimension(1, 1));
         jButton11.setMinimumSize(new java.awt.Dimension(1, 1));
         jButton11.setPreferredSize(new java.awt.Dimension(37, 20));
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel8.setText("Año");
@@ -259,6 +290,63 @@ public class WorkMonitorUI extends javax.swing.JFrame {
 
         jLabel12.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel12.setText("Actividad Actual:");
+
+        jTable2.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+        centerRenderer.setVerticalAlignment( JLabel.CENTER );
+        jTable2.setDefaultRenderer(String.class, centerRenderer);
+        jTable2.setShowHorizontalLines(true);
+        jTable2.setShowVerticalLines(true);
+        jTable2.setGridColor(Color.LIGHT_GRAY);
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+
+            new Object [][] {
+                {"09:00 - 09:30"},
+                {"09:30 - 10:00"},
+                {"10:00 - 10:30"},
+                {"10:30 - 11:00"},
+                {"11:00 - 11:30"},
+                {"11:30 - 12:00"},
+                {"12:00 - 12:30"},
+                {"12:30 - 13:00"},
+                {"13:00 - 13:30"},
+                {"13:30 - 14:00"},
+                {"14:00 - 14:30"},
+                {"14:30 - 15:00"},
+                {"15:00 - 15:30"},
+                {"15:30 - 16:00"},
+                {"16:00 - 16:30"},
+                {"16:30 - 17:00"},
+                {"17:00 - 17:30"},
+                {"17:30 - 18:00"},
+                {"18:00 - 18:30"},
+                {"18:30 - 19:00"},
+                {"19:00 - 19:30"},
+                {"19:30 - 20:00"},
+                {"20:00 - 20:30"},
+                {"20:30 - 21:00"},
+                {"21:00 - 21:30"},
+                {"21:30 - 22:00"},
+                {"22:00 - 22:30"},
+                {"22:30 - 23:00"},
+                {"23:00 - 23:30"},
+            }
+
+            ,
+            new String [] {
+                "Horario"
+            }
+        ));
+        jTable2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jTable2.setFocusable(false);
+        jTable2.setRowSelectionAllowed(false);
+        jScrollPane5.setViewportView(jTable2);
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel6.setText("Fecha:");
+
+        jLabel10.setText("jLabel10");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -302,31 +390,39 @@ public class WorkMonitorUI extends javax.swing.JFrame {
                                 .addGap(50, 50, 50)
                                 .addComponent(jLabel8)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
-                                .addComponent(jLabel9))
+                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel7)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(25, 25, 25)
+                                .addComponent(jLabel7)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButton6, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING)))
-                    .addComponent(jScrollPane4)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel12))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel12)
+                            .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -334,7 +430,10 @@ public class WorkMonitorUI extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel6)
+                        .addComponent(jLabel10))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -367,21 +466,23 @@ public class WorkMonitorUI extends javax.swing.JFrame {
                                     .addComponent(jLabel8)
                                     .addComponent(jLabel9))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                    .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                             .addComponent(jScrollPane3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jButton2)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton2))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jButton3)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                                    .addComponent(jTextField4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton3))))))
                 .addContainerGap())
         );
 
@@ -453,6 +554,22 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jTextField4.setText("");
     }//GEN-LAST:event_jButton3MouseClicked
 
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1MouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        TipoUI tipoUI=new TipoUI(null, true);
+        tipoUI.setVisible(true); 
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+        // TODO add your handling code here:
+        TareaUI tareaUI=new TareaUI(null, true);
+        tareaUI.setVisible(true); 
+    }//GEN-LAST:event_jButton11ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -503,11 +620,13 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -519,7 +638,9 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JScrollPane jScrollPane5;
+    public static javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField4;
     // End of variables declaration//GEN-END:variables
