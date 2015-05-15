@@ -6,7 +6,7 @@
     <class name="my.entity.TareaActividad" table="TAREA_ACTIVIDAD" schema="APP" optimistic-lock="version">
         <id name="id" type="int">
             <column name="ID" />
-            <generator class="assigned" />
+            <generator class="increment" />
         </id>
         <property name="comentario" type="java.lang.Character">
             <column name="COMENTARIO" length="1" />
@@ -17,10 +17,10 @@
         <property name="idActividad" type="java.lang.Integer">
             <column name="ID_ACTIVIDAD" />
         </property>      
-        <many-to-one name="actividad" class="my.entity.Actividad" fetch="select" insert="false" update="false">
+        <many-to-one name="actividad" class="my.entity.Actividad" fetch="select" cascade="all" insert="false" update="false">
             <column name="ID_ACTIVIDAD" />
         </many-to-one>        
-        <many-to-one name="tarea" class="my.entity.TipoTarea" fetch="select" insert="false" update="false">
+        <many-to-one name="tarea" class="my.entity.TipoTarea" fetch="select" cascade="all" insert="false" update="false">
              <column name="ID_TIPO_TAREA" />
         </many-to-one>          
     </class>

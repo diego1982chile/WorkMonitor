@@ -7,6 +7,7 @@ package my.dao;
 
 import java.io.Serializable;
 import java.util.List;
+import my.entity.TareaActividad;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -26,6 +27,39 @@ public class ActividadDao {
         try {
             tx = session.beginTransaction();                
             identity=session.save(o);             
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            throw e;
+        }
+        finally {
+            session.close();
+        }
+        return identity;
+    }
+   
+      public <T> Serializable save(final T o, final List<TareaActividad> l) throws Exception{
+      //return (T) sessionFactory.getCurrentSession().save(o);
+        final Session session = HibernateUtil.sessionFactory.openSession();
+        Transaction tx = null;
+        Serializable identity=0;
+        try {
+            tx = session.beginTransaction();                
+            identity=session.save(o);
+            if(identity!=(Serializable)0){               
+               for(int i=0;i<l.size();++i) {
+                   Serializable identity2=0;
+                   l.get(i).setIdActividad((Integer)identity);
+                   identity2=session.save(l.get(i));
+                   if(identity2==(Serializable)0){
+                        throw new Exception();
+                   }
+               }
+            }
+            else{
+                throw new Exception();
+            }
             tx.commit();
         }
         catch (Exception e) {
@@ -83,7 +117,7 @@ public class ActividadDao {
     public <T> List<T> getByNombre(final String nombre) {
       //final Session session = sessionFactory.getCurrentSession();
       final Session session = HibernateUtil.sessionFactory.openSession();      
-      String sql = "from Actividad a where a.nombre = ?";
+      String sql = "from Actividad a where upper(a.nombre) = upper(?)";
       List result = session.createQuery(sql)
       .setString(0, nombre)      
       .list();      

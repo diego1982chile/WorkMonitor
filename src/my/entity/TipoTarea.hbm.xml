@@ -6,7 +6,7 @@
     <class name="my.entity.TipoTarea" table="TIPO_TAREA" schema="APP" optimistic-lock="version">
         <id name="id" type="int">
             <column name="ID" />
-            <generator class="assigned" />
+            <generator class="increment" />
         </id>
         <property name="nombre" type="string">
             <column name="NOMBRE" length="63" not-null="true" />

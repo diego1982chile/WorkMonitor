@@ -72,7 +72,7 @@ public class PersonaDao{
     public <T> List<T> getByNombreApellido(final String nombre, final String apellido) {
       //final Session session = sessionFactory.getCurrentSession();
       final Session session = HibernateUtil.sessionFactory.openSession();      
-      String sql = "from Persona p where p.nombre = ? and p.apellido = ?";
+      String sql = "from Persona p where upper(p.nombre) = upper(?) and upper(p.apellido) = upper(?)";
       List result = session.createQuery(sql)
       .setString(0, nombre)
       .setParameter(1, apellido)
@@ -83,7 +83,7 @@ public class PersonaDao{
     public <T> List<T> getByUsuarioPassword(final String usuario, final String password) {
       //final Session session = sessionFactory.getCurrentSession();
       final Session session = HibernateUtil.sessionFactory.openSession();      
-      String sql = "from Persona p where p.usuario = ? and p.password = ?";
+      String sql = "from Persona p where upper(p.usuario) = upper(?) and p.password = ?";
       List result = session.createQuery(sql)
       .setString(0, usuario)
       .setParameter(1, password)

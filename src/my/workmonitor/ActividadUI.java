@@ -6,11 +6,18 @@
 package my.workmonitor;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import my.dao.ActividadDao;
 import my.dao.TareaDao;
+import my.dao.TipoTareaDao;
 import my.entity.Actividad;
+import my.entity.Tarea;
+import my.entity.TareaActividad;
+import my.entity.TipoTarea;
 
 /**
  *
@@ -27,6 +34,7 @@ public class ActividadUI extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
     }
+   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -44,8 +52,15 @@ public class ActividadUI extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jButton1 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(440, 350));
+        setMinimumSize(new java.awt.Dimension(440, 350));
+        setModal(true);
+        setPreferredSize(new java.awt.Dimension(440, 350));
 
         jLabel1.setBackground(new java.awt.Color(123, 153, 172));
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -68,37 +83,63 @@ public class ActividadUI extends javax.swing.JDialog {
             }
         });
 
+        jLabel4.setText("Tipos");
+        jLabel4.setAlignmentX(0.5F);
+
+        jList1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jList1.setModel(new javax.swing.AbstractListModel() {
+            List<TipoTarea> tiposTarea=WorkMonitorUI.jList1.getSelectedValuesList();
+            public int getSize() { return tiposTarea.size(); }
+            public Object getElementAt(int i) { return tiposTarea.get(i); }
+        });
+        jList1.setFocusable(false);
+        jScrollPane2.setViewportView(jList1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGap(20, 20, 20)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
-                        .addComponent(jLabel3)
-                        .addComponent(jScrollPane1)
-                        .addComponent(jTextField1)))
-                .addContainerGap(21, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jButton1))
+                            .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addGap(23, 23, 23))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addComponent(jButton1)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addGap(20, 20, 20))
         );
 
         pack();
@@ -120,7 +161,7 @@ public class ActividadUI extends javax.swing.JDialog {
 
         Actividad actividad=new Actividad();
         actividad.setNombre(nombre);
-        actividad.setDescripcion(descripcion);
+        actividad.setDescripcion(descripcion);        
 
         List<Actividad> actividades=actividadDao.getByNombre(nombre);
 
@@ -128,12 +169,34 @@ public class ActividadUI extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Ya existe una actividad con este nombre");
             return;
         }
-
-        if(actividadDao.save(actividad)==(Serializable)0){
-            JOptionPane.showMessageDialog(null, "Error al ingresar actividad. No se ha podido ingresar");
-            return;
+        
+        List<TareaActividad> tareasActividad = new ArrayList<TareaActividad>();
+        
+        for(int i=0;i<jList1.getModel().getSize();++i){
+            TareaActividad tareaActividad=new TareaActividad();
+            TipoTarea tipoTarea=(TipoTarea)jList1.getModel().getElementAt(i);
+            tareaActividad.setActividad(actividad);
+            tareaActividad.setTarea(tipoTarea);
+            tareaActividad.setIdTarea(tipoTarea.getId());
+            tareasActividad.add(tareaActividad);
         }
 
+        try {
+            if(actividadDao.save(actividad,tareasActividad)==(Serializable)0){
+                JOptionPane.showMessageDialog(null, "Error al ingresar actividad. No se ha podido ingresar");
+                return;
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ActividadUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        WorkMonitorUI.jList2.setModel(new javax.swing.AbstractListModel() {
+            TipoTarea tipoTarea=(TipoTarea)jList1.getModel().getElementAt(0);
+            List<Actividad> actividades=actividadDao.getByTipoTarea(tipoTarea.getNombre());
+            public int getSize() { return actividades.size(); }
+            public Object getElementAt(int i) { return actividades.get(i).getNombre(); }
+        });
+        
         JOptionPane.showMessageDialog(null, "La actividad se ha ingresado correctamente");
         this.dispose();
         return;
@@ -186,7 +249,10 @@ public class ActividadUI extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables

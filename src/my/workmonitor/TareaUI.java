@@ -10,7 +10,9 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import my.dao.TareaDao;
 import my.dao.TipoTareaDao;
+import my.entity.Persona;
 import my.entity.Tarea;
+import my.entity.TipoTarea;
 
 /**
  *
@@ -21,11 +23,20 @@ public class TareaUI extends javax.swing.JDialog {
     /**
      * Creates new form TareaUI
      */
+    private static TipoTareaDao tipoTareaDao = new TipoTareaDao();
     private static TareaDao tareaDao= new TareaDao();
+    private static TipoTarea tipoTarea;
     
     public TareaUI(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+    }
+    
+    public TareaUI(java.awt.Frame parent, boolean modal, Integer idTipoTarea) {        
+        super(parent, modal);
+        initComponents();
+        tipoTarea=tipoTareaDao.get(TipoTarea.class ,(Integer)idTipoTarea); 
+        jTextField2.setText(tipoTarea.getNombre().toString());
     }
 
     /**
@@ -48,6 +59,10 @@ public class TareaUI extends javax.swing.JDialog {
         jTextField2 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(300, 400));
+        setMinimumSize(new java.awt.Dimension(300, 400));
+        setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+        setPreferredSize(new java.awt.Dimension(300, 400));
 
         jLabel1.setBackground(new java.awt.Color(123, 153, 172));
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -56,14 +71,17 @@ public class TareaUI extends javax.swing.JDialog {
         jLabel1.setOpaque(true);
 
         jLabel2.setText("Nombre");
+        jLabel2.setAlignmentX(0.5F);
 
         jLabel3.setText("Descripción");
+        jLabel3.setAlignmentX(0.5F);
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
         jButton1.setText("Crear");
+        jButton1.setAlignmentX(0.5F);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -71,33 +89,33 @@ public class TareaUI extends javax.swing.JDialog {
         });
 
         jLabel4.setText("Tipo");
+        jLabel4.setAlignmentX(0.5F);
 
-        jTextField2.setEnabled(false);
+        jTextField2.setFocusable(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jButton1)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jLabel4)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jScrollPane1)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jTextField2)
+                        .addComponent(jLabel2)
+                        .addComponent(jLabel3)
+                        .addComponent(jScrollPane1)
+                        .addComponent(jTextField1)))
+                .addGap(23, 23, 23))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                .addGap(16, 16, 16)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -108,7 +126,7 @@ public class TareaUI extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1)
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
                 .addContainerGap())
@@ -134,6 +152,8 @@ public class TareaUI extends javax.swing.JDialog {
         Tarea tarea=new Tarea();
         tarea.setNombre(nombre);
         tarea.setComentario(descripcion);
+        tarea.setTipoTarea(tipoTarea);
+        tarea.setIdTipoTarea(tipoTarea.getId());
 
         List<Tarea> tareas=tareaDao.getByNombre(nombre);
 
@@ -146,6 +166,12 @@ public class TareaUI extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Error al ingresar tarea. No se ha podido ingresar");
             return;
         }
+        
+        WorkMonitorUI.jList3.setModel(new javax.swing.AbstractListModel() {
+            List<Tarea> tareas=tareaDao.getByTipoTarea(tipoTarea.getNombre());
+            public int getSize() { return tareas.size(); }
+            public Object getElementAt(int i) { return tareas.get(i).getNombre(); }
+        });
 
         JOptionPane.showMessageDialog(null, "La tarea se ha ingresado correctamente");
         this.dispose();

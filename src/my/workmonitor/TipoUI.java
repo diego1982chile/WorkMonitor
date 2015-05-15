@@ -134,6 +134,12 @@ public class TipoUI extends javax.swing.JDialog {
             return;
         }
 
+        WorkMonitorUI.jList1.setModel(new javax.swing.AbstractListModel() {
+            List<TipoTarea> tiposTarea=tipoTareaDao.getAll(TipoTarea.class);
+            public int getSize() { return tiposTarea.size(); }    
+            public Object getElementAt(int i) { return tiposTarea.get(i); }
+        });
+        
         JOptionPane.showMessageDialog(null, "El tipo de tarea se ha ingresado correctamente");
         this.dispose();
         return;

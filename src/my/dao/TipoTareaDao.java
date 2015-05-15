@@ -25,6 +25,7 @@ public class TipoTareaDao {
         Serializable identity=0;
         try {
             tx = session.beginTransaction();                
+            session.flush();
             identity=session.save(o);             
             tx.commit();
         }
@@ -44,7 +45,7 @@ public class TipoTareaDao {
     }
 
     /***/
-    public <T> T get(final Class<T> type, final Long id){
+    public <T> T get(final Class<T> type, final Integer id){
       //return (T) sessionFactory.getCurrentSession().get(type, id);
       return (T) HibernateUtil.sessionFactory.openSession().get(type, id);
     }
@@ -73,10 +74,11 @@ public class TipoTareaDao {
     public <T> List<T> getByNombre(final String nombre) {
       //final Session session = sessionFactory.getCurrentSession();
       final Session session = HibernateUtil.sessionFactory.openSession();      
-      String sql = "from TipoTarea t  where t.nombre = ?";
+      String sql = "from TipoTarea t where upper(t.nombre) = upper(?)";
       List result = session.createQuery(sql)
       .setString(0, nombre)      
       .list();      
+      session.close();
       return result;
     }    
     

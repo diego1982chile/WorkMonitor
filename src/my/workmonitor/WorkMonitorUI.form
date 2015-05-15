@@ -217,7 +217,7 @@
               <Font name="Tahoma" size="10" style="0"/>
             </Property>
             <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="new javax.swing.AbstractListModel() {&#xa;    //String[] strings = { &quot;Item 1&quot;, &quot;Item 2&quot;, &quot;Item 3&quot;, &quot;Item 4&quot;, &quot;Item 5&quot; };&#xa;    //public int getSize() { return strings.length; }&#xa;    //public Object getElementAt(int i) { return strings[i]; }&#xa;&#xa;    List&lt;TipoTarea&gt; tiposTarea=tipoTareaDao.getAll(TipoTarea.class);&#xa;    public int getSize() { return tiposTarea.size(); }&#xa;    //public Object getElementAt(int i) { return tiposTarea.get(i).getNombre; }&#xa;    public Object getElementAt(int i) { return tiposTarea.get(i); }&#xa;}" type="code"/>
+              <Connection code="new javax.swing.AbstractListModel() {&#xa;    List&lt;TipoTarea&gt; tiposTarea=tipoTareaDao.getAll(TipoTarea.class);&#xa;    public int getSize() { return tiposTarea.size(); }    &#xa;    public Object getElementAt(int i) { return tiposTarea.get(i); }&#xa;}" type="code"/>
             </Property>
           </Properties>
           <Events>
@@ -226,6 +226,7 @@
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JList()"/>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="TipoTareaDao tipoTareaDao= new TipoTareaDao();"/>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -243,12 +244,13 @@
               <Font name="Tahoma" size="10" style="0"/>
             </Property>
             <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="new javax.swing.AbstractListModel() {&#xa;    List&lt;Actividad&gt; actividades=actividadDao.getByTipoTarea(&quot;&quot;);&#xa;    public int getSize() { return actividades.size(); }&#xa;    //public Object getElementAt(int i) { return actividades.get(i).getNombre(); }&#xa;    public Object getElementAt(int i) { return actividades.get(i); }&#xa;}" type="code"/>
+              <Connection code="new javax.swing.AbstractListModel() {&#xa;    List&lt;Actividad&gt; actividades=actividadDao.getByTipoTarea(&quot;&quot;);&#xa;    public int getSize() { return actividades.size(); }    &#xa;    public Object getElementAt(int i) { return actividades.get(i); }&#xa;}" type="code"/>
             </Property>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JList()"/>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="ActividadDao actividadDao=new ActividadDao();"/>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -280,6 +282,7 @@
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JList()"/>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="TareaDao tareaDao= new TareaDao();"/>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -500,6 +503,9 @@
           <Dimension value="[37, 20]"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton7ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton9">
       <Properties>

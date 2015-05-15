@@ -66,7 +66,8 @@ public class TareaDao {
       final Session session = HibernateUtil.sessionFactory.openSession();
       ThreadLocalSessionContext.bind(session);
       //final Session session = HibernateUtil.getSession(sessionFactory);
-      final Criteria crit = session.createCriteria(type);      
+      final Criteria crit = session.createCriteria(type);   
+      session.close();
       return crit.list();
     }    
     
@@ -76,17 +77,19 @@ public class TareaDao {
       String sql = "select t from Tarea t inner join t.tipoTarea tt where tt.nombre = ?";
       List result = session.createQuery(sql)
       .setString(0, tipoTarea)      
-      .list();      
+      .list();    
+      session.close();
       return result;
     }
     
     public <T> List<T> getByNombre(final String nombre) {
       //final Session session = sessionFactory.getCurrentSession();
       final Session session = HibernateUtil.sessionFactory.openSession();      
-      String sql = "from Tarea t where t.nombre = ?";
+      String sql = "from Tarea t where upper(t.nombre) = upper(?)";
       List result = session.createQuery(sql)
       .setString(0, nombre)      
-      .list();      
+      .list();   
+      session.close();
       return result;
     }    
 }

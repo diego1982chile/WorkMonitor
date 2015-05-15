@@ -112,13 +112,8 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         TipoTareaDao tipoTareaDao= new TipoTareaDao();
         jList1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jList1.setModel(new javax.swing.AbstractListModel() {
-            //String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            //public int getSize() { return strings.length; }
-            //public Object getElementAt(int i) { return strings[i]; }
-
             List<TipoTarea> tiposTarea=tipoTareaDao.getAll(TipoTarea.class);
             public int getSize() { return tiposTarea.size(); }
-            //public Object getElementAt(int i) { return tiposTarea.get(i).getNombre; }
             public Object getElementAt(int i) { return tiposTarea.get(i); }
         });
         jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
@@ -133,7 +128,6 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jList2.setModel(new javax.swing.AbstractListModel() {
             List<Actividad> actividades=actividadDao.getByTipoTarea("");
             public int getSize() { return actividades.size(); }
-            //public Object getElementAt(int i) { return actividades.get(i).getNombre(); }
             public Object getElementAt(int i) { return actividades.get(i); }
         });
         jScrollPane2.setViewportView(jList2);
@@ -246,6 +240,11 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jButton7.setMaximumSize(new java.awt.Dimension(1, 1));
         jButton7.setMinimumSize(new java.awt.Dimension(1, 1));
         jButton7.setPreferredSize(new java.awt.Dimension(37, 20));
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         jButton9.setText("-");
         jButton9.setMargin(new java.awt.Insets(0, 0, 0, 0));
@@ -506,10 +505,10 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
         // TODO add your handling code here:
         ActividadDao actividadDao=new ActividadDao();
-        //Actividad actividad= (Actividad)jList1.getSelectedValue();
-        //System.out.println("tipoTarea="+jList1.getSelectedValue() );
-        TipoTarea tipoTarea= (TipoTarea)jList1.getSelectedValue();
-        //System.out.println("tipoTarea="+tipoTarea.getId());
+        TipoTarea tipoTarea= (TipoTarea)jList1.getSelectedValue();        
+        
+        if(jList1.getSelectedValue()==null)
+            return;
         
         jList2.setModel(new javax.swing.AbstractListModel() {
             List<Actividad> actividades=actividadDao.getByTipoTarea(jList1.getSelectedValue().toString());
@@ -565,10 +564,26 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
-        // TODO add your handling code here:
-        TareaUI tareaUI=new TareaUI(null, true);
+        // TODO add your handling code here:        
+        TipoTarea tipoTarea=(TipoTarea)jList1.getSelectedValue();
+        if(tipoTarea==null){
+            JOptionPane.showMessageDialog(null, "Debe seleccionar un tipo de tarea");
+            return;
+        }
+        TareaUI tareaUI=new TareaUI(null, true, tipoTarea.getId());
         tareaUI.setVisible(true); 
     }//GEN-LAST:event_jButton11ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+        TipoTarea tipoTarea=(TipoTarea)jList1.getSelectedValue();
+        if(tipoTarea==null){
+            JOptionPane.showMessageDialog(null, "Debe seleccionar un tipo de tarea");
+            return;
+        }
+        ActividadUI actividadUI=new ActividadUI(null, true);
+        actividadUI.setVisible(true); 
+    }//GEN-LAST:event_jButton7ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -630,9 +645,9 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JList jList1;
-    private javax.swing.JList jList2;
-    private javax.swing.JList jList3;
+    public static javax.swing.JList jList1;
+    public static javax.swing.JList jList2;
+    public static javax.swing.JList jList3;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
