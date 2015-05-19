@@ -7,8 +7,12 @@ package my.dao;
 
 import java.io.Serializable;
 import java.util.List;
+import my.entity.Actividad;
+import my.entity.Hh;
+import my.entity.Tarea;
 import my.entity.TareaActividad;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.context.internal.ThreadLocalSessionContext;
@@ -72,9 +76,48 @@ public class ActividadDao {
         return identity;
     }
 
-    public void delete(final Object object){
+    public void delete(final Object o){
       //sessionFactory.getCurrentSession().delete(object);
-      HibernateUtil.sessionFactory.openSession().delete(object);
+        //HibernateUtil.sessionFactory.openSession().delete(object);
+        final Session session = HibernateUtil.sessionFactory.openSession(); 
+        session.clear();
+        Actividad actividad=(Actividad)o;   
+        actividad=(Actividad)session.get(Actividad.class, actividad.getId());         
+        Transaction tx = null;        
+        try {
+            tx = session.beginTransaction();                            
+            // Primero eliminamos las HH
+            String sql = "from Hh where id_actividad = ?";
+            List result = session.createQuery(sql)
+            .setInteger(0, actividad.getId())      
+            .list();    
+            for(int i=0;i<result.size();++i){
+                Hh hh=(Hh)result.get(i);
+                hh.setTarea(null);
+                session.delete(hh);            
+            }
+            // Luego eliminamos las tareaactividad
+            sql = "from TareaActividad where id_actividad = ?";
+            result = session.createQuery(sql)
+            .setInteger(0, actividad.getId())      
+            .list();    
+            for(int i=0;i<result.size();++i){                    
+                TareaActividad tareaActividad=(TareaActividad)result.get(i);                
+                tareaActividad.setTarea(null);
+                tareaActividad.setActividad(null);
+                session.delete(tareaActividad);            
+            }                                              
+            // Por ultimo eliminamos la actividad                            
+            session.delete(actividad);             
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            throw e;
+        }
+        finally {
+            session.close();
+        }        
     }
 
     /***/
@@ -101,6 +144,7 @@ public class ActividadDao {
       ThreadLocalSessionContext.bind(session);
       //final Session session = HibernateUtil.getSession(sessionFactory);
       final Criteria crit = session.createCriteria(type);      
+      //session.close();
       return crit.list();
     }    
     
@@ -110,7 +154,8 @@ public class ActividadDao {
       String sql = "select a from TareaActividad ta inner join ta.actividad a inner join ta.tarea t where t.nombre = ?";
       List result = session.createQuery(sql)
       .setString(0, tipoTarea)      
-      .list();      
+      .list();     
+      session.close();
       return result;
     }
     
@@ -121,6 +166,7 @@ public class ActividadDao {
       List result = session.createQuery(sql)
       .setString(0, nombre)      
       .list();      
+      session.close();
       return result;
     }   
 }

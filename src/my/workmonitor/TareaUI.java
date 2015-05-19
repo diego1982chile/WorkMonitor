@@ -170,7 +170,7 @@ public class TareaUI extends javax.swing.JDialog {
         WorkMonitorUI.jList3.setModel(new javax.swing.AbstractListModel() {
             List<Tarea> tareas=tareaDao.getByTipoTarea(tipoTarea.getNombre());
             public int getSize() { return tareas.size(); }
-            public Object getElementAt(int i) { return tareas.get(i).getNombre(); }
+            public Object getElementAt(int i) { return tareas.get(i); }
         });
 
         JOptionPane.showMessageDialog(null, "La tarea se ha ingresado correctamente");

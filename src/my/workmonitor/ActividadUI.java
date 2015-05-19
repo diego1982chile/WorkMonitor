@@ -194,7 +194,7 @@ public class ActividadUI extends javax.swing.JDialog {
             TipoTarea tipoTarea=(TipoTarea)jList1.getModel().getElementAt(0);
             List<Actividad> actividades=actividadDao.getByTipoTarea(tipoTarea.getNombre());
             public int getSize() { return actividades.size(); }
-            public Object getElementAt(int i) { return actividades.get(i).getNombre(); }
+            public Object getElementAt(int i) { return actividades.get(i); }
         });
         
         JOptionPane.showMessageDialog(null, "La actividad se ha ingresado correctamente");

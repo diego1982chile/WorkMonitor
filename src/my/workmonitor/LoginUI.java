@@ -183,7 +183,8 @@ public class LoginUI extends javax.swing.JDialog {
      */
     public static void main(String args[]) {
         
-        Locale.setDefault(new Locale("es_CL"));  
+        //Locale.setDefault(new Locale("es_CL"));  
+        Locale.setDefault(new Locale("es","CL"));  
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

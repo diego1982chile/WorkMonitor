@@ -7,6 +7,9 @@ package my.dao;
 
 import java.io.Serializable;
 import java.util.List;
+import my.entity.Actividad;
+import my.entity.Hh;
+import my.entity.Tarea;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -18,7 +21,7 @@ import org.hibernate.context.internal.ThreadLocalSessionContext;
  */
 public class TareaDao {
     
-       public <T> Serializable save(final T o){
+    public <T> Serializable save(final T o){
       //return (T) sessionFactory.getCurrentSession().save(o);
         final Session session = HibernateUtil.sessionFactory.openSession();
         Transaction tx = null;
@@ -38,9 +41,37 @@ public class TareaDao {
         return identity;
     }
 
-    public void delete(final Object object){
+    public void delete(final Object o){
       //sessionFactory.getCurrentSession().delete(object);
-      HibernateUtil.sessionFactory.openSession().delete(object);
+        //HibernateUtil.sessionFactory.openSession().delete(object);
+        final Session session = HibernateUtil.sessionFactory.openSession();
+        Tarea tarea=(Tarea)o;          
+        tarea=(Tarea)session.get(Tarea.class, tarea.getId());
+        Transaction tx = null;        
+        try {
+            tx = session.beginTransaction();     
+            // Primero eliminamos las HH
+            String sql = "from Hh where id_tarea = ?";
+            List result = session.createQuery(sql)
+            .setInteger(0, tarea.getId())      
+            .list();    
+            for(int i=0;i<result.size();++i){
+                Hh hh=(Hh)result.get(i);
+                hh.setTarea(null);                
+                session.delete(result.get(i));
+            }
+            // Luego eliminamos la tarea
+            tarea.setTipoTarea(null);
+            session.delete(tarea);             
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            throw e;
+        }
+        finally {
+            session.close();
+        }        
     }
 
     /***/
@@ -67,7 +98,7 @@ public class TareaDao {
       ThreadLocalSessionContext.bind(session);
       //final Session session = HibernateUtil.getSession(sessionFactory);
       final Criteria crit = session.createCriteria(type);   
-      session.close();
+      //session.close();
       return crit.list();
     }    
     

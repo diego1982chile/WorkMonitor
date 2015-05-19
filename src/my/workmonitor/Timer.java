@@ -91,6 +91,8 @@ public class Timer {
                                 "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
                             }
                         ));
+                        WorkMonitorUI.instante.set(Calendar.WEEK_OF_MONTH,instante.get(Calendar.WEEK_OF_MONTH));
+                        //WorkMonitorUI.jLabel4.setText(WorkMonitorUI.instante.get(Calendar.WEEK_OF_MONTH)+"ª SEMANA"); 
                    }
                 }
             }

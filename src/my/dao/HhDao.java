@@ -125,6 +125,7 @@ public class HhDao {
       ThreadLocalSessionContext.bind(session);
       //final Session session = HibernateUtil.getSession(sessionFactory);
       final Criteria crit = session.createCriteria(type);      
+      //session.close();
       return crit.list();
     }    
     
@@ -179,6 +180,7 @@ public class HhDao {
           }
           dia.add(Calendar.DAY_OF_WEEK, 1);
       }
+      session.close();
       return matrizHh;
     }
         

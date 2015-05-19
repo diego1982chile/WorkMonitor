@@ -8,6 +8,8 @@ package my.workmonitor;
 import java.awt.Color;
 import java.awt.Component;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,8 +41,12 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     private static Persona persona=new Persona();
     private static PersonaDao personaDao= new PersonaDao();
     private static TipoTareaDao tipoTareaDao= new TipoTareaDao();
-    private static TareaDao tareaDao= new TareaDao();    
+    private static TareaDao tareaDao= new TareaDao(); 
+    private static ActividadDao actividadDao= new ActividadDao(); 
+    private static HhDao hhDao= new HhDao(); 
     private static Timer timer= new Timer();
+    private static Clock clock= new Clock();
+    public static Calendar instante;    
     //private static PersonaDao personaDao= new PersonaDao();
     /**
      * Creates new form WorkMonitorUI
@@ -49,14 +55,48 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         initComponents();
     }
     
-    public WorkMonitorUI(Serializable idPersona) {
+    public WorkMonitorUI(Serializable idPersona) {        
+        instante= Calendar.getInstance();   
+        instante.setMinimalDaysInFirstWeek(2);
+        
         initComponents();             
-        persona=personaDao.get(Persona.class ,(Integer)idPersona);        
-        jLabel7.setText(persona.getUsuario().toString());
+        persona=personaDao.get(Persona.class, (Integer)idPersona);        
+        //jLabel7.setText(persona.getUsuario().toString());        
+        this.setTitle("HH "+persona.getUsuario().toString());
+        //jLabel4.setText(instante.get(Calendar.WEEK_OF_MONTH)+"ª SEMANA"); 
+        //jProgressBar2.setMaximum(getWeeks(instante));
+        //jProgressBar2.setValue(instante.get(Calendar.WEEK_OF_MONTH));
+        jComboBox1.setSelectedIndex(instante.get(Calendar.MONTH));
+        System.out.println("getWeeks(instante)="+getWeeks(instante));
+        System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));
+        jSlider1.setMaximum(getWeeks(instante));
+        System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));
+        jSlider1.setValue(instante.get(Calendar.WEEK_OF_MONTH)+1);
+        //jSlider1.setPaintLabels(true);
+        //jSlider1.setPaintTicks(true);
         List<TipoTarea> tiposTarea=tipoTareaDao.getAll(TipoTarea.class);        
         //for(int i=0;i<tiposTarea.size();++i)
             //jList1.add(tiposTarea.get(i).getNombre());        
-    }    
+    }
+    
+    public int getWeeks(Calendar calendar){        
+        
+        //System.out.println("cal.get(Calendar.MONTH)="+cal.get(Calendar.MONTH));        
+        //System.out.println("cal.get(Calendar.WEEK_OF_MONTH) antes="+cal.get(Calendar.WEEK_OF_MONTH));
+        int sem=calendar.get(Calendar.WEEK_OF_MONTH);
+        calendar.set(Calendar.WEEK_OF_MONTH,2);
+        //System.out.println("cal.get(Calendar.WEEK_OF_MONTH) despues="+cal.get(Calendar.WEEK_OF_MONTH));
+        int mes=calendar.get(Calendar.MONTH);
+        int weeks=2;        
+        while(mes==calendar.get(Calendar.MONTH)){
+            System.out.println("cal.get(Calendar.WEEK_OF_MONTH)="+calendar.get(Calendar.WEEK_OF_MONTH));
+            calendar.add(Calendar.WEEK_OF_MONTH, 1);            
+            weeks++;
+        }
+        calendar.set(Calendar.MONTH,mes);
+        calendar.set(Calendar.WEEK_OF_MONTH,sem);
+        return weeks-1;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -76,7 +116,6 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jList3 = new javax.swing.JList();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -87,7 +126,6 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jComboBox1 = new javax.swing.JComboBox();
         jComboBox2 = new javax.swing.JComboBox();
         jButton6 = new javax.swing.JButton();
-        jLabel7 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
@@ -102,12 +140,10 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
+        jSlider1 = new javax.swing.JSlider();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(898, 680));
-        setPreferredSize(new java.awt.Dimension(898, 680));
 
         TipoTareaDao tipoTareaDao= new TipoTareaDao();
         jList1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
@@ -150,11 +186,6 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel3.setText("Activs.");
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jLabel4.setText("Horas Hombre:");
-        jLabel4.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-
         jButton2.setText("Iniciar");
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -167,7 +198,6 @@ public class WorkMonitorUI extends javax.swing.JFrame {
             }
         });
 
-        HhDao hhDao=new HhDao();
         jTable1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         Color color = UIManager.getColor("Table.gridColor");
         MatteBorder border = new MatteBorder(1, 1, 0, 0, color);
@@ -177,7 +207,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jTable1.setGridColor(Color.LIGHT_GRAY);
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
 
-            hhDao.getBySemana(new Date())
+            hhDao.getBySemana(instante.getTime())
             ,
             new String [] {
                 "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
@@ -192,17 +222,31 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jTextField1.setPreferredSize(new java.awt.Dimension(50, 20));
 
         jButton4.setText("<< Anterior");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setText("Siguiente >>");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
             }
         });
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        int anyo=instante.get(Calendar.YEAR);
+        String[] anyos=new String[10];
+        for(int i=0;i<10;++i)
+        anyos[i]=String.valueOf(anyo-i);
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(anyos));
 
         jButton6.setText("Generar Planilla");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
@@ -210,8 +254,6 @@ public class WorkMonitorUI extends javax.swing.JFrame {
                 jButton6ActionPerformed(evt);
             }
         });
-
-        jLabel7.setText("jLabel7");
 
         jButton1.setText("+");
         jButton1.setMargin(new java.awt.Insets(1, 1, 1, 1));
@@ -234,6 +276,11 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jButton8.setMaximumSize(new java.awt.Dimension(1, 1));
         jButton8.setMinimumSize(new java.awt.Dimension(1, 1));
         jButton8.setPreferredSize(new java.awt.Dimension(37, 20));
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
 
         jButton7.setText("+");
         jButton7.setMargin(new java.awt.Insets(0, 0, 0, 0));
@@ -251,12 +298,22 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jButton9.setMaximumSize(new java.awt.Dimension(1, 1));
         jButton9.setMinimumSize(new java.awt.Dimension(1, 1));
         jButton9.setPreferredSize(new java.awt.Dimension(37, 20));
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
 
         jButton10.setText("-");
         jButton10.setMargin(new java.awt.Insets(1, 1, 1, 1));
         jButton10.setMaximumSize(new java.awt.Dimension(1, 1));
         jButton10.setMinimumSize(new java.awt.Dimension(1, 1));
         jButton10.setPreferredSize(new java.awt.Dimension(37, 20));
+        jButton10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton10ActionPerformed(evt);
+            }
+        });
 
         jButton11.setText("+");
         jButton11.setMargin(new java.awt.Insets(1, 1, 1, 1));
@@ -270,10 +327,10 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         });
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel8.setText("Año");
+        jLabel8.setText("Mes");
 
         jLabel9.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel9.setText("Mes");
+        jLabel9.setText("Año");
 
         jProgressBar1.setPreferredSize(new java.awt.Dimension(146, 23));
 
@@ -343,9 +400,10 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jScrollPane5.setViewportView(jTable2);
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Fecha:");
-
-        jLabel10.setText("jLabel10");
+        jLabel6.setFocusable(false);
+        jLabel6.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -383,28 +441,24 @@ public class WorkMonitorUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton4)
                                 .addGap(50, 50, 50)
                                 .addComponent(jLabel8)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel7)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel9)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(25, 25, 25))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGap(8, 8, 8)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButton6, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING)))
@@ -428,24 +482,23 @@ public class WorkMonitorUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel6)
-                        .addComponent(jLabel10))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel6))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1)
                         .addGap(9, 9, 9)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -453,13 +506,13 @@ public class WorkMonitorUI extends javax.swing.JFrame {
                                 .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jButton4)
-                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jButton5)
                                     .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel8)
@@ -496,6 +549,23 @@ public class WorkMonitorUI extends javax.swing.JFrame {
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // TODO add your handling code here:
+        int mes=instante.get(Calendar.MONTH);        
+        instante.set(Calendar.MONTH,jComboBox1.getSelectedIndex());
+        Date now=new Date();
+        if(instante.getTime().getTime()>now.getTime()){
+            JOptionPane.showMessageDialog(null, "No puede seleccionar un mes superior al actual");
+            instante.set(Calendar.MONTH,mes);
+            jComboBox1.setSelectedIndex(instante.get(Calendar.MONTH));
+            return;
+        }
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            hhDao.getBySemana(instante.getTime())
+            ,
+            new String [] {
+                "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
+        }
+));
+            
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
@@ -532,8 +602,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         if(jList3.getSelectedValue()==null){
             JOptionPane.showMessageDialog(null, "Debe seleccionar una tarea");   
             return;
-        }
-        System.out.println(jList2.getSelectedValue());
+        }        
         Actividad actividad=(Actividad)jList2.getSelectedValue();
         Tarea tarea=(Tarea)jList3.getSelectedValue();
         timer.setActividadActual(actividad.getId());
@@ -585,6 +654,111 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         actividadUI.setVisible(true); 
     }//GEN-LAST:event_jButton7ActionPerformed
 
+    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+        // TODO add your handling code here:
+        int dialogResult =JOptionPane.showConfirmDialog(null, "Al eliminar esta tarea, se eliminarán todas las HH asociadas a ella. ¿Seguro que desea eliminar la tarea?");
+        if(dialogResult == JOptionPane.YES_OPTION){
+            Tarea tarea=(Tarea)jList3.getSelectedValue();
+            tareaDao.delete(tarea);
+            WorkMonitorUI.jList3.setModel(new javax.swing.AbstractListModel() {
+                List<Tarea> tareas=tareaDao.getByTipoTarea(jList1.getModel().getElementAt(0).toString());
+                public int getSize() { return tareas.size(); }
+                public Object getElementAt(int i) { return tareas.get(i); }
+            });
+        }
+        else{
+            return;
+        }
+    }//GEN-LAST:event_jButton10ActionPerformed
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        // TODO add your handling code here:
+        int dialogResult =JOptionPane.showConfirmDialog(null, "Al eliminar esta actividad, se eliminarán todas las HH asociadas a ella. ¿Seguro que desea eliminar la actividad?");
+        if(dialogResult == JOptionPane.YES_OPTION){
+            Actividad actividad=(Actividad)jList2.getSelectedValue();
+            actividadDao.delete(actividad);
+            WorkMonitorUI.jList2.setModel(new javax.swing.AbstractListModel() {
+                List<Actividad> actividades=actividadDao.getByTipoTarea(jList1.getModel().getElementAt(0).toString());
+                public int getSize() { return actividades.size(); }
+                public Object getElementAt(int i) { return actividades.get(i); }
+            });            
+        }
+        else{
+            return;
+        }
+    }//GEN-LAST:event_jButton9ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        // TODO add your handling code here:
+        int dialogResult =JOptionPane.showConfirmDialog(null, "Al eliminar este tipo de tarea, se eliminarán todas las tareas, actividades y HH asociadas a ella. ¿Seguro que desea eliminar el tipo de tarea?");
+        if(dialogResult == JOptionPane.YES_OPTION){
+            TipoTarea tipoTarea=(TipoTarea)jList1.getSelectedValue();
+            tipoTareaDao.delete(tipoTarea);
+            jList1.setModel(new javax.swing.AbstractListModel() {
+                List<TipoTarea> tiposTarea=tipoTareaDao.getAll(TipoTarea.class);
+                public int getSize() { return tiposTarea.size(); }
+                public Object getElementAt(int i) { return tiposTarea.get(i); }
+            });
+            jList3.setModel(new javax.swing.AbstractListModel() {
+                List<Tarea> tareas=tareaDao.getByTipoTarea("");
+                public int getSize() { return tareas.size(); }
+                public Object getElementAt(int i) { return tareas.get(i); }
+            });      
+            jList2.setModel(new javax.swing.AbstractListModel() {
+                List<Actividad> actividades=actividadDao.getByTipoTarea("");
+                public int getSize() { return actividades.size(); }
+                public Object getElementAt(int i) { return actividades.get(i); }
+            });                
+        }
+        else{
+            return;
+        }
+    }//GEN-LAST:event_jButton8ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        int mes=instante.get(Calendar.MONTH);
+        System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));
+        instante.add(Calendar.WEEK_OF_MONTH, -1);
+        System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));
+        if(instante.get(Calendar.MONTH)!=mes) // Si hay un desplazamiento en el mes
+        {
+            JOptionPane.showMessageDialog(null, "No existen más semanas para este mes. Seleccione el mes anterior");
+            instante.add(Calendar.WEEK_OF_MONTH, 1);
+            return;
+        }        
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            hhDao.getBySemana(instante.getTime())
+            ,
+            new String [] {
+                "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
+            }
+        ));
+        jSlider1.setValue(jSlider1.getValue()-1);
+        //jLabel4.setText(instante.get(Calendar.WEEK_OF_MONTH)+"ª SEMANA"); 
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        int mes=instante.get(Calendar.MONTH);
+        instante.add(Calendar.WEEK_OF_MONTH, 1);
+        if(instante.get(Calendar.MONTH)!=mes) // Si hay un desplazamiento en el mes
+        {
+            JOptionPane.showMessageDialog(null, "No existen más semanas para este mes. Seleccione el mes siguiente");
+            instante.add(Calendar.WEEK_OF_MONTH, -1);
+            return;
+        }
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            hhDao.getBySemana(instante.getTime())
+            ,
+            new String [] {
+                "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
+            }
+        ));
+        //jLabel4.setText(instante.get(Calendar.WEEK_OF_MONTH)+"ª SEMANA");         
+        jSlider1.setValue(jSlider1.getValue()+1);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -635,14 +809,11 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
+    public static final javax.swing.JLabel jLabel6 = new javax.swing.JLabel();
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     public static javax.swing.JList jList1;
@@ -654,6 +825,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JSlider jSlider1;
     public static javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField1;
