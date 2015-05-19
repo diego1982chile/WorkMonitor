@@ -7,6 +7,7 @@ package my.dao;
 
 import java.io.Serializable;
 import java.util.List;
+import my.entity.TareaActividad;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -37,6 +38,31 @@ public class TareaActividadDao {
         }
         return identity;
     }
+    
+    public <T> Serializable save(final List<T> l) throws Exception{
+      //return (T) sessionFactory.getCurrentSession().save(o);
+        final Session session = HibernateUtil.sessionFactory.openSession();
+        Transaction tx = null;
+        Serializable identity=0;
+        try {
+            tx = session.beginTransaction();                
+            for(int i=0;i<l.size();++i) {                                
+                identity=session.save(l.get(i));
+                if(identity==(Serializable)0){
+                    throw new Exception();
+                }
+            }           
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            throw e;
+        }
+        finally {
+            session.close();
+        }
+        return identity;
+    }    
 
     public void delete(final Object object){
       //sessionFactory.getCurrentSession().delete(object);

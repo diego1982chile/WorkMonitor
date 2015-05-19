@@ -3,15 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/workmonitor/RegisterUI.java</file>
             <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/workmonitor/TipoUI.java</file>
             <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/workmonitor/TareaUI.java</file>
-            <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/workmonitor/Clock.java</file>
-            <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/dao/HhDao.java</file>
+            <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/dao/TareaActividadDao.java</file>
+            <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/workmonitor/TareaActividadUI.java</file>
             <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/workmonitor/ActividadUI.java</file>
-            <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/workmonitor/Timer.java</file>
-            <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/workmonitor/LoginUI.java</file>
             <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/workmonitor/WorkMonitorUI.java</file>
+            <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/dao/ActividadDao.java</file>
         </group>
     </open-files>
 </project-private>
