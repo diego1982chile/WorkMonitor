@@ -63,6 +63,30 @@ public class TareaActividadDao {
         }
         return identity;
     }    
+    
+    public void delete(final List<TareaActividad> l) throws Exception{
+      //return (T) sessionFactory.getCurrentSession().save(o);
+        final Session session = HibernateUtil.sessionFactory.openSession();
+        Transaction tx = null;        
+        Serializable identity=0;
+        try {
+            tx = session.beginTransaction();                
+            for(int i=0;i<l.size();++i){
+                TareaActividad tareaActividad=(TareaActividad)l.get(i);                                
+                tareaActividad.setTarea(null);
+                tareaActividad.setActividad(null);
+                session.delete(tareaActividad);            
+            }                                                 
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            throw e;
+        }
+        finally {
+            session.close();
+        }        
+    }     
 
     public void delete(final Object object){
       //sessionFactory.getCurrentSession().delete(object);
@@ -74,6 +98,18 @@ public class TareaActividadDao {
       //return (T) sessionFactory.getCurrentSession().get(type, id);
       return (T) HibernateUtil.sessionFactory.openSession().get(type, id);
     }
+    
+    public <T> T get(final int idTarea, final int idActividad){
+      //return (T) sessionFactory.getCurrentSession().get(type, id);
+      final Session session = HibernateUtil.sessionFactory.openSession();      
+      String sql = "from TareaActividad where id_tipo_tarea = :idTarea and id_actividad = :idActividad";
+      List result = session.createQuery(sql)
+      .setInteger("idTarea", idTarea)      
+      .setInteger("idActividad", idActividad)      
+      .list();      
+      session.close();
+      return (T) result;
+    }    
 
     /***/
     public <T> T merge(final T o)   {

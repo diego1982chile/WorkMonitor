@@ -7,21 +7,26 @@ package my.workmonitor;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import my.dao.ActividadDao;
 import my.dao.HhDao;
 import my.dao.PersonaDao;
@@ -64,39 +69,41 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         persona=personaDao.get(Persona.class, (Integer)idPersona);        
         //jLabel7.setText(persona.getUsuario().toString());        
         this.setTitle("HH "+persona.getUsuario().toString());
-        //jLabel4.setText(instante.get(Calendar.WEEK_OF_MONTH)+"ª SEMANA"); 
-        //jProgressBar2.setMaximum(getWeeks(instante));
-        //jProgressBar2.setValue(instante.get(Calendar.WEEK_OF_MONTH));
-        jComboBox1.setSelectedIndex(instante.get(Calendar.MONTH));
-        System.out.println("getWeeks(instante)="+getWeeks(instante));
-        System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));
-        jSlider1.setMaximum(getWeeks(instante));
-        System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));
-        jSlider1.setValue(instante.get(Calendar.WEEK_OF_MONTH)+1);
-        //jSlider1.setPaintLabels(true);
-        //jSlider1.setPaintTicks(true);
-        List<TipoTarea> tiposTarea=tipoTareaDao.getAll(TipoTarea.class);        
-        //for(int i=0;i<tiposTarea.size();++i)
-            //jList1.add(tiposTarea.get(i).getNombre());        
+        jComboBox1.setSelectedIndex(instante.get(Calendar.MONTH));     
+        //jTable1.getColumn(jTable1.getColumnName(instante.get(Calendar.DAY_OF_WEEK))).setHeaderRenderer(new TableCellRenderer()        
     }
     
-    public int getWeeks(Calendar calendar){        
+    public void setWeeks(){        
         
-        //System.out.println("cal.get(Calendar.MONTH)="+cal.get(Calendar.MONTH));        
-        //System.out.println("cal.get(Calendar.WEEK_OF_MONTH) antes="+cal.get(Calendar.WEEK_OF_MONTH));
-        int sem=calendar.get(Calendar.WEEK_OF_MONTH);
-        calendar.set(Calendar.WEEK_OF_MONTH,2);
-        //System.out.println("cal.get(Calendar.WEEK_OF_MONTH) despues="+cal.get(Calendar.WEEK_OF_MONTH));
-        int mes=calendar.get(Calendar.MONTH);
-        int weeks=2;        
-        while(mes==calendar.get(Calendar.MONTH)){
-            System.out.println("cal.get(Calendar.WEEK_OF_MONTH)="+calendar.get(Calendar.WEEK_OF_MONTH));
-            calendar.add(Calendar.WEEK_OF_MONTH, 1);            
+        Calendar cal=Calendar.getInstance();        
+        cal.set(Calendar.MONTH, jComboBox1.getSelectedIndex());
+        cal.setMinimalDaysInFirstWeek(2);
+        int sem=cal.get(Calendar.WEEK_OF_MONTH);  
+        System.out.println("sem="+sem);  
+        cal.add(Calendar.WEEK_OF_MONTH,-sem);
+        System.out.println("Primero cal.get(Calendar.WEEK_OF_MONTH)="+cal.get(Calendar.WEEK_OF_MONTH));
+        cal.set(Calendar.WEEK_OF_MONTH,1);  
+        System.out.println("Primero cal.get(Calendar.WEEK_OF_MONTH)="+cal.get(Calendar.WEEK_OF_MONTH));
+        
+        int mes=cal.get(Calendar.MONTH);
+        int weeks=1;        
+        
+        Hashtable<Integer, JLabel> table = new Hashtable<Integer, JLabel>();
+        
+        while(mes==cal.get(Calendar.MONTH)){
+            System.out.println("cal.get(Calendar.WEEK_OF_MONTH)="+cal.get(Calendar.WEEK_OF_MONTH));
+            cal.add(Calendar.WEEK_OF_MONTH, 1); 
+            table.put (weeks, new JLabel(String.valueOf(weeks)));
             weeks++;
-        }
-        calendar.set(Calendar.MONTH,mes);
-        calendar.set(Calendar.WEEK_OF_MONTH,sem);
-        return weeks-1;
+        }  
+        
+        weeks=weeks-cal.get(Calendar.WEEK_OF_MONTH)+1;
+        jSlider1.setMaximum(weeks);        
+        jSlider1.setValue(instante.get(Calendar.WEEK_OF_MONTH)); 
+        jSlider1.setLabelTable(table);
+        System.out.println("Calendar.WEEK_OF_MONTH)="+cal.get(Calendar.WEEK_OF_MONTH));
+        cal.set(Calendar.WEEK_OF_MONTH,sem);  
+        System.out.println("weeks="+(weeks));        
     }
 
     /**
@@ -202,12 +209,25 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jTable1.setShowHorizontalLines(true);
         jTable1.setShowVerticalLines(true);
         jTable1.setGridColor(Color.LIGHT_GRAY);
+
+        Calendar cal=Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_WEEK)+2);
+        int[] dias=new int[5];
+        for(int i=0;i<5;++i){
+            System.out.println("cal.get(Calendar.DAY_OF_MONTH)="+cal.get(Calendar.DAY_OF_MONTH));
+            dias[i]=cal.get(Calendar.DAY_OF_MONTH);
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+        }
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
 
             hhDao.getBySemana(instante.getTime())
             ,
             new String [] {
-                "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
+                "Lunes"+dias[0],
+                "Martes "+dias[1],
+                "Miércoles "+dias[2],
+                "Jueves "+dias[3],
+                "Viernes "+dias[4]
             }
         ));
         jScrollPane4.setViewportView(jTable1);
@@ -380,6 +400,11 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jLabel6.setFocusable(false);
         jLabel6.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
+        jSlider1.setMinimum(1);
+        jSlider1.setPaintLabels(true);
+        jSlider1.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 10));
+        jSlider1.setFocusable(false);
+
         jButton12.setText("↑↓");
         jButton12.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton12.setMaximumSize(new java.awt.Dimension(1, 1));
@@ -506,7 +531,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                    .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                             .addComponent(jScrollPane3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -543,15 +568,32 @@ public class WorkMonitorUI extends javax.swing.JFrame {
             instante.set(Calendar.MONTH,mes);
             jComboBox1.setSelectedIndex(instante.get(Calendar.MONTH));
             return;
+        }        
+        
+        setWeeks();
+        
+        Calendar cal=Calendar.getInstance();        
+        
+        cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_WEEK)+2);
+        int[] dias=new int[5];
+        for(int i=0;i<5;++i){
+            System.out.println("cal.get(Calendar.DAY_OF_MONTH)="+cal.get(Calendar.DAY_OF_MONTH));
+            dias[i]=cal.get(Calendar.DAY_OF_MONTH);
+            cal.add(Calendar.DAY_OF_MONTH, 1);
         }
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
+
             hhDao.getBySemana(instante.getTime())
             ,
             new String [] {
-                "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
-        }
-));
-            
+                "Lunes "+dias[0],
+                "Martes "+dias[1],
+                "Miércoles "+dias[2],
+                "Jueves "+dias[3],
+                "Viernes "+dias[4]
+            }        
+        ));            
+        
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
@@ -676,20 +718,40 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
         int mes=instante.get(Calendar.MONTH);
+        if(jSlider1.getValue()==jSlider1.getMinimum()){
+            JOptionPane.showMessageDialog(null, "No existen más semanas para este mes. Seleccione el mes anterior");            
+            return;
+        }
         System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));
         instante.add(Calendar.WEEK_OF_MONTH, -1);
         System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));
+        /*
         if(instante.get(Calendar.MONTH)!=mes) // Si hay un desplazamiento en el mes
         {
             JOptionPane.showMessageDialog(null, "No existen más semanas para este mes. Seleccione el mes anterior");
             instante.add(Calendar.WEEK_OF_MONTH, 1);
             return;
-        }        
+        }      
+        */
+        //Calendar cal=Calendar.getInstance();
+        //instante.add(Calendar.WEEK_OF_MONTH, -1);
+        instante.add(Calendar.DAY_OF_MONTH, -instante.get(Calendar.DAY_OF_WEEK)+2);
+        int[] dias=new int[5];
+        for(int i=0;i<5;++i){
+            System.out.println("cal.get(Calendar.DAY_OF_MONTH)="+instante.get(Calendar.DAY_OF_MONTH));
+            dias[i]=instante.get(Calendar.DAY_OF_MONTH);
+            instante.add(Calendar.DAY_OF_MONTH, 1);
+        }
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
+
             hhDao.getBySemana(instante.getTime())
             ,
             new String [] {
-                "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
+                "Lunes "+dias[0],
+                "Martes "+dias[1],
+                "Miércoles "+dias[2],
+                "Jueves "+dias[3],
+                "Viernes "+dias[4]
             }
         ));
         jSlider1.setValue(jSlider1.getValue()-1);
@@ -699,21 +761,39 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
         int mes=instante.get(Calendar.MONTH);
+        
+        if(jSlider1.getValue()==jSlider1.getMaximum()){
+            JOptionPane.showMessageDialog(null, "No existen más semanas para este mes. Seleccione el mes anterior");            
+            return;
+        }
         instante.add(Calendar.WEEK_OF_MONTH, 1);
+        /*
         if(instante.get(Calendar.MONTH)!=mes) // Si hay un desplazamiento en el mes
         {
             JOptionPane.showMessageDialog(null, "No existen más semanas para este mes. Seleccione el mes siguiente");
             instante.add(Calendar.WEEK_OF_MONTH, -1);
             return;
         }
+        */
+        instante.add(Calendar.DAY_OF_MONTH, -instante.get(Calendar.DAY_OF_WEEK)+2);
+        int[] dias=new int[5];
+        for(int i=0;i<5;++i){
+            System.out.println("cal.get(Calendar.DAY_OF_MONTH)="+instante.get(Calendar.DAY_OF_MONTH));
+            dias[i]=instante.get(Calendar.DAY_OF_MONTH);
+            instante.add(Calendar.DAY_OF_MONTH, 1);
+        }
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
+
             hhDao.getBySemana(instante.getTime())
             ,
             new String [] {
-                "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
+                "Lunes "+dias[0],
+                "Martes "+dias[1],
+                "Miércoles "+dias[2],
+                "Jueves "+dias[3],
+                "Viernes "+dias[4]
             }
         ));
-        //jLabel4.setText(instante.get(Calendar.WEEK_OF_MONTH)+"ª SEMANA");         
         jSlider1.setValue(jSlider1.getValue()+1);
     }//GEN-LAST:event_jButton5ActionPerformed
 

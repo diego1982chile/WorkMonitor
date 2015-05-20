@@ -241,14 +241,51 @@ public class TareaActividadUI extends javax.swing.JDialog {
     }//GEN-LAST:event_jList1ValueChanged
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here:                      
+        List<Actividad> actividades=jList2.getSelectedValuesList();        
+        
+        List<TareaActividad> tareasActividad = new ArrayList<TareaActividad>();                
+        
+        TipoTarea tipoTarea=(TipoTarea)jList1.getSelectedValue();
+        
+        if(actividades.isEmpty()){
+            JOptionPane.showMessageDialog(null, "Debe seleccionar al menos una actividad a desasociar");
+            return;
+        }
+        
+        for(int i=0;i<actividades.size();++i){   
+            TareaActividad tareaActividad=new TareaActividad();            
+            List<TareaActividad> tareaActividades=tareaActividadDao.get(tipoTarea.getId(),actividades.get(i).getId());
+            if(!tareaActividades.isEmpty())
+                tareasActividad.add(tareaActividades.get(0));
+        }
+
+        try {
+            tareaActividadDao.delete(tareasActividad);            
+        } catch (Exception ex) {
+            Logger.getLogger(ActividadUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        WorkMonitorUI.jList2.setModel(new javax.swing.AbstractListModel() {
+            TipoTarea tipoTarea=(TipoTarea)jList1.getModel().getElementAt(0);
+            List<Actividad> actividades=actividadDao.getByTipoTarea(tipoTarea.getNombre());
+            public int getSize() { return actividades.size(); }
+            public Object getElementAt(int i) { return actividades.get(i); }
+        });
+        
+        JOptionPane.showMessageDialog(null, "La(s) actividad(es) se han desasociado correctamente");
+        this.dispose();
+        return;  
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:     
         List<TipoTarea> tiposTarea=jList1.getSelectedValuesList();
         
-        List<Actividad> actividadesPorTareas=jList2.getSelectedValuesList();                
+        List<Actividad> actividadesPorTareas=new ArrayList<Actividad>(jList2.getModel().getSize());
+        
+        for(int i=0;i<jList2.getModel().getSize();++i)
+            actividadesPorTareas.add((Actividad) jList2.getModel().getElementAt(i));
         
         List<Actividad> actividades=jList3.getSelectedValuesList();
 
@@ -261,16 +298,17 @@ public class TareaActividadUI extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Debe seleccionar al menos una actividad para asociar a un tipo de tarea");
             return;
         }
+
+        boolean interseccion=!actividadesPorTareas.retainAll(actividades);
+                
+        System.out.println("interseccion="+interseccion);
+        //System.out.println("actividades.retainAll(actividadesPorTareas)="+actividades.retainAll(actividadesPorTareas));        
         
-        if(actividades.retainAll(actividadesPorTareas)){
+        if(interseccion){
             JOptionPane.showMessageDialog(null, "Está intentando asignar actividades que ya han sido asignadas. Por favor descartelas");
             return;
         }                
-        
-        System.out.println("actividadesPorTareas.retainAll(actividades)="+actividadesPorTareas.retainAll(actividades));
-        System.out.println("actividades.retainAll(actividadesPorTareas)="+actividades.retainAll(actividadesPorTareas));        
-        return;
-        /*
+                       
         List<TareaActividad> tareasActividad = new ArrayList<TareaActividad>();
         
         for(int i=0;i<tiposTarea.size();++i){            
@@ -287,7 +325,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
 
         try {
             if(tareaActividadDao.save(tareasActividad)==(Serializable)0){
-                JOptionPane.showMessageDialog(null, "Error al ingresar actividad. No se ha podido ingresar");
+                JOptionPane.showMessageDialog(null, "Error al ingresar tarea actividad. No se ha podido ingresar");
                 return;
             }
         } catch (Exception ex) {
@@ -301,10 +339,9 @@ public class TareaActividadUI extends javax.swing.JDialog {
             public Object getElementAt(int i) { return actividades.get(i); }
         });
         
-        JOptionPane.showMessageDialog(null, "La actividad se ha ingresado correctamente");
+        JOptionPane.showMessageDialog(null, "La(s) actividad(es) se han ingresado correctamente");
         this.dispose();
-        return;
-        */
+        return;        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
@@ -329,7 +366,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
                 public int getSize() { return actividades.size(); }
                 public Object getElementAt(int i) { return actividades.get(i); }
             });
-            JOptionPane.showMessageDialog(null, "La actividad se ha ingresado correctamente");
+            JOptionPane.showMessageDialog(null, "La actividad se ha eliminado correctamente");
             this.dispose();
         }
         else{

@@ -1,6 +1,9 @@
 package my.entity;
 // Generated 04-05-2015 19:37:31 by Hibernate Tools 4.3.1
 
+import java.text.SimpleDateFormat;
+
+
 
 
 /**
@@ -49,6 +52,12 @@ public class Actividad  implements java.io.Serializable {
         return this.getNombre();
     }
 
+        @Override
+    public boolean equals(Object o)
+    {
+        Actividad actividad=(Actividad)o;
+        return (this.getNombre().equals(actividad.getNombre()));        
+    }
 }
 
 
