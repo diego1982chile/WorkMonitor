@@ -68,7 +68,7 @@ public class TipoTareaDao {
                 for(int j=0;j<result2.size();++j){
                     Hh hh=(Hh)result.get(j);
                     hh.setTarea(null);                    
-                    session.delete(hh);  
+                    session.delete(hh);     
                 }
                 tareaActividad.setActividad(null);
                 tareaActividad.setTarea(null);
