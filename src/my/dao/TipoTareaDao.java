@@ -66,7 +66,7 @@ public class TipoTareaDao {
                 .setInteger(0, tareaActividad.getIdActividad())      
                 .list();   
                 for(int j=0;j<result2.size();++j){
-                    Hh hh=(Hh)result.get(j);
+                    Hh hh=(Hh)result2.get(j);
                     hh.setTarea(null);                    
                     session.delete(hh);     
                 }
@@ -135,6 +135,17 @@ public class TipoTareaDao {
       return crit.list();
     }    
     
+    public <T> List<T> getByPersona(final Integer idPersona) {
+      //final Session session = sessionFactory.getCurrentSession();
+      final Session session = HibernateUtil.sessionFactory.openSession();      
+      String sql = "from TipoTarea where id_persona = ?";
+      List result = session.createQuery(sql)
+      .setInteger(0, idPersona)      
+      .list();     
+      session.close();
+      return result;
+    }       
+    
     public <T> List<T> getByNombre(final String nombre) {
       //final Session session = sessionFactory.getCurrentSession();
       final Session session = HibernateUtil.sessionFactory.openSession();      
@@ -145,5 +156,17 @@ public class TipoTareaDao {
       session.close();
       return result;
     }    
+    
+    public <T> List<T> getByPersonaNombre(final Integer idPersona, final String nombre) {
+      //final Session session = sessionFactory.getCurrentSession();
+      final Session session = HibernateUtil.sessionFactory.openSession();      
+      String sql = "from TipoTarea where id_persona = :idPersona and upper(nombre) = upper(:nombre)";
+      List result = session.createQuery(sql)
+      .setInteger("idPersona", idPersona)      
+      .setString("nombre", nombre)
+      .list();      
+      session.close();
+      return result;
+    }   
     
 }

@@ -11,6 +11,7 @@ import my.entity.Actividad;
 import my.entity.Hh;
 import my.entity.Tarea;
 import my.entity.TareaActividad;
+import my.entity.TipoTarea;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -146,18 +147,30 @@ public class ActividadDao {
       final Criteria crit = session.createCriteria(type);      
       //session.close();
       return crit.list();
-    }    
+    }  
     
-    public <T> List<T> getByTipoTarea(final String tipoTarea) {
+    public <T> List<T> getByPersona(final Integer idPersona) {
       //final Session session = sessionFactory.getCurrentSession();
       final Session session = HibernateUtil.sessionFactory.openSession();      
-      String sql = "select a from TareaActividad ta inner join ta.actividad a inner join ta.tarea t where t.nombre = ?";
+      String sql = "from Actividad where id_persona = ?";
       List result = session.createQuery(sql)
-      .setString(0, tipoTarea)      
+      .setInteger(0, idPersona)      
       .list();     
       session.close();
       return result;
-    }
+    }    
+    
+    public <T> List<T> getByTipoTarea(final Object o) {
+      //final Session session = sessionFactory.getCurrentSession();
+      final Session session = HibernateUtil.sessionFactory.openSession();      
+      TipoTarea tipoTarea=(TipoTarea)o;
+      String sql = "select a from TareaActividad ta inner join ta.actividad a inner join ta.tarea t where t.id = ?";
+      List result = session.createQuery(sql)
+      .setInteger(0, tipoTarea.getId())      
+      .list();     
+      session.close();
+      return result;
+    }      
     
     public <T> List<T> getByNombre(final String nombre) {
       //final Session session = sessionFactory.getCurrentSession();
@@ -165,6 +178,18 @@ public class ActividadDao {
       String sql = "from Actividad a where upper(a.nombre) = upper(?)";
       List result = session.createQuery(sql)
       .setString(0, nombre)      
+      .list();      
+      session.close();
+      return result;
+    }   
+    
+    public <T> List<T> getByPersonaNombre(final Integer idPersona, final String nombre) {
+      //final Session session = sessionFactory.getCurrentSession();
+      final Session session = HibernateUtil.sessionFactory.openSession();      
+      String sql = "from Actividad a where a.idPersona = :idPersona and upper(a.nombre) = upper(:nombre)";
+      List result = session.createQuery(sql)
+      .setInteger("idPersona", idPersona)      
+      .setString("nombre", nombre)
       .list();      
       session.close();
       return result;

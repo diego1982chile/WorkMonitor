@@ -136,13 +136,14 @@ public class ActividadUI extends javax.swing.JDialog {
         }
 
         Actividad actividad=new Actividad();
-        actividad.setNombre(nombre);
-        actividad.setDescripcion(descripcion);        
+        actividad.setIdPersona(WorkMonitorUI.persona.getId());
+        actividad.setNombre(nombre.trim().toUpperCase());
+        actividad.setDescripcion(descripcion.trim().toUpperCase());        
 
-        List<Actividad> actividades=actividadDao.getByNombre(nombre);
+        List<Actividad> actividades=actividadDao.getByPersonaNombre(WorkMonitorUI.persona.getId(),nombre);
 
         if(!actividades.isEmpty()){
-            JOptionPane.showMessageDialog(null, "Ya existe una actividad con este nombre");
+            JOptionPane.showMessageDialog(null, "Ya existe una actividad con este nombre para este usuario");
             return;
         }        
 
@@ -155,8 +156,8 @@ public class ActividadUI extends javax.swing.JDialog {
             Logger.getLogger(ActividadUI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        WorkMonitorUI.jList2.setModel(new javax.swing.AbstractListModel() {            
-            List<Actividad> actividades=actividadDao.getAll(Actividad.class);
+        TareaActividadUI.jList3.setModel(new javax.swing.AbstractListModel() {            
+            List<Actividad> actividades=actividadDao.getByPersona(WorkMonitorUI.persona.getId());
             public int getSize() { return actividades.size(); }
             public Object getElementAt(int i) { return actividades.get(i); }
         });

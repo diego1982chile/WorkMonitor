@@ -60,7 +60,6 @@ public class TareaActividadUI extends javax.swing.JDialog {
         jButton2 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jList3 = new javax.swing.JList();
         jButton7 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
 
@@ -77,7 +76,8 @@ public class TareaActividadUI extends javax.swing.JDialog {
 
         jList1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jList1.setModel(new javax.swing.AbstractListModel() {
-            List<TipoTarea> tiposTarea=tipoTareaDao.getAll(TipoTarea.class);
+            //List<TipoTarea> tiposTarea=tipoTareaDao.getAll(TipoTarea.class);
+            List<TipoTarea> tiposTarea=tipoTareaDao.getByPersona(WorkMonitorUI.persona.getId());
             public int getSize() { return tiposTarea.size(); }
             public Object getElementAt(int i) { return tiposTarea.get(i); }
         });
@@ -100,7 +100,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
         ActividadDao actividadDao=new ActividadDao();
         jList2.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jList2.setModel(new javax.swing.AbstractListModel() {
-            List<Actividad> actividades=actividadDao.getByTipoTarea("");
+            List<Actividad> actividades=new ArrayList<Actividad>();
             public int getSize() { return actividades.size(); }
             public Object getElementAt(int i) { return actividades.get(i); }
         });
@@ -126,7 +126,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
 
         jList3.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jList3.setModel(new javax.swing.AbstractListModel() {
-            List<Actividad> actividades=actividadDao.getAll(Actividad.class);
+            List<Actividad> actividades=actividadDao.getByPersona(WorkMonitorUI.persona.getId());
             public int getSize() { return actividades.size(); }
             public Object getElementAt(int i) { return actividades.get(i); }
         });
@@ -234,7 +234,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
         return;
 
         jList2.setModel(new javax.swing.AbstractListModel() {
-            List<Actividad> actividades=actividadDao.getByTipoTarea(jList1.getSelectedValue().toString());
+            List<Actividad> actividades=actividadDao.getByTipoTarea(jList1.getSelectedValue());
             public int getSize() { return actividades.size(); }
             public Object getElementAt(int i) { return actividades.get(i); }
         });
@@ -266,7 +266,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
             Logger.getLogger(ActividadUI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        WorkMonitorUI.jList2.setModel(new javax.swing.AbstractListModel() {
+        jList2.setModel(new javax.swing.AbstractListModel() {
             TipoTarea tipoTarea=(TipoTarea)jList1.getModel().getElementAt(0);
             List<Actividad> actividades=actividadDao.getByTipoTarea(tipoTarea.getNombre());
             public int getSize() { return actividades.size(); }
@@ -274,7 +274,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
         });
         
         JOptionPane.showMessageDialog(null, "La(s) actividad(es) se han desasociado correctamente");
-        this.dispose();
+        //this.dispose();
         return;  
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -331,16 +331,16 @@ public class TareaActividadUI extends javax.swing.JDialog {
         } catch (Exception ex) {
             Logger.getLogger(ActividadUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        WorkMonitorUI.jList2.setModel(new javax.swing.AbstractListModel() {
+        
+        JOptionPane.showMessageDialog(null, "La(s) actividad(es) se han ingresado correctamente");
+        
+        jList2.setModel(new javax.swing.AbstractListModel() {
             TipoTarea tipoTarea=(TipoTarea)jList1.getModel().getElementAt(0);
-            List<Actividad> actividades=actividadDao.getByTipoTarea(tipoTarea.getNombre());
+            List<Actividad> actividades=actividadDao.getByTipoTarea(tipoTarea);
             public int getSize() { return actividades.size(); }
             public Object getElementAt(int i) { return actividades.get(i); }
         });
-        
-        JOptionPane.showMessageDialog(null, "La(s) actividad(es) se han ingresado correctamente");
-        this.dispose();
+        //this.dispose();
         return;        
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -356,13 +356,13 @@ public class TareaActividadUI extends javax.swing.JDialog {
         if(dialogResult == JOptionPane.YES_OPTION){
             Actividad actividad=(Actividad)jList3.getSelectedValue();
             actividadDao.delete(actividad);
-            WorkMonitorUI.jList2.setModel(new javax.swing.AbstractListModel() {
-                List<Actividad> actividades=actividadDao.getByTipoTarea(jList1.getModel().getElementAt(0).toString());
+            TareaActividadUI.jList3.setModel(new javax.swing.AbstractListModel() {
+                List<Actividad> actividades=actividadDao.getByPersona(WorkMonitorUI.persona.getId());
                 public int getSize() { return actividades.size(); }
                 public Object getElementAt(int i) { return actividades.get(i); }
             });
             JOptionPane.showMessageDialog(null, "La actividad se ha eliminado correctamente");
-            this.dispose();
+            //this.dispose();
         }
         else{
             return;
@@ -423,7 +423,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JList jList1;
     private javax.swing.JList jList2;
-    private javax.swing.JList jList3;
+    public static final javax.swing.JList jList3 = new javax.swing.JList();
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;

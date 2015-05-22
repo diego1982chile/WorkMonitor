@@ -8,6 +8,9 @@
             <column name="ID" />
             <generator class="increment" />
         </id>
+        <property name="idPersona" type="java.lang.Integer">
+            <column name="ID_PERSONA" />
+        </property>        
         <property name="nombre" type="string">
             <column name="NOMBRE" length="63" not-null="true" />
         </property>

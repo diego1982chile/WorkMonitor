@@ -12,10 +12,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -44,7 +47,7 @@ import my.entity.TipoTarea;
  */
 public class WorkMonitorUI extends javax.swing.JFrame {
 
-    private static Persona persona=new Persona();
+    public static Persona persona=new Persona();
     private static PersonaDao personaDao= new PersonaDao();
     private static TipoTareaDao tipoTareaDao= new TipoTareaDao();
     private static TareaDao tareaDao= new TareaDao(); 
@@ -64,9 +67,8 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     public WorkMonitorUI(Serializable idPersona) {        
         instante= Calendar.getInstance();   
         instante.setMinimalDaysInFirstWeek(2);
-        
-        initComponents();             
-        persona=personaDao.get(Persona.class, (Integer)idPersona);        
+        persona=personaDao.get(Persona.class, (Integer)idPersona);
+        initComponents();                             
         //jLabel7.setText(persona.getUsuario().toString());        
         this.setTitle("HH "+persona.getUsuario().toString());
         jComboBox1.setSelectedIndex(instante.get(Calendar.MONTH));     
@@ -80,6 +82,8 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         cal.setMinimalDaysInFirstWeek(2);
         int sem=cal.get(Calendar.WEEK_OF_MONTH);  
         System.out.println("sem="+sem);  
+        System.out.println("Primero cal.get(Calendar.WEEK_OF_MONTH)="+cal.get(Calendar.WEEK_OF_MONTH));
+        if()
         cal.add(Calendar.WEEK_OF_MONTH,-sem);
         System.out.println("Primero cal.get(Calendar.WEEK_OF_MONTH)="+cal.get(Calendar.WEEK_OF_MONTH));
         cal.set(Calendar.WEEK_OF_MONTH,1);  
@@ -96,14 +100,28 @@ public class WorkMonitorUI extends javax.swing.JFrame {
             table.put (weeks, new JLabel(String.valueOf(weeks)));
             weeks++;
         }  
-        
-        weeks=weeks-cal.get(Calendar.WEEK_OF_MONTH)+1;
+        if(cal.get(Calendar.WEEK_OF_MONTH)>0)
+            weeks=weeks-cal.get(Calendar.WEEK_OF_MONTH)+1;
+        table.put (weeks, new JLabel(String.valueOf(weeks)));
         jSlider1.setMaximum(weeks);        
         jSlider1.setValue(instante.get(Calendar.WEEK_OF_MONTH)); 
         jSlider1.setLabelTable(table);
-        System.out.println("Calendar.WEEK_OF_MONTH)="+cal.get(Calendar.WEEK_OF_MONTH));
+        setLabels();
+        System.out.println("Calendar.WEEK_OF_MONTH="+cal.get(Calendar.WEEK_OF_MONTH));
         cal.set(Calendar.WEEK_OF_MONTH,sem);  
         System.out.println("weeks="+(weeks));        
+    }
+    
+    public void setLabels(){
+        Font font = jSlider1.getFont();
+        Dictionary dict = jSlider1.getLabelTable();
+        Enumeration e = dict.elements();
+        while ( e.hasMoreElements() ) {
+            Object element = e.nextElement();
+            if ( element instanceof JComponent ) {
+                ((JComponent)element).setFont( font );
+            }
+    }
     }
 
     /**
@@ -150,12 +168,13 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(898, 680));
+        setMinimumSize(new java.awt.Dimension(898, 685));
+        setPreferredSize(new java.awt.Dimension(898, 685));
 
         TipoTareaDao tipoTareaDao= new TipoTareaDao();
         jList1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jList1.setModel(new javax.swing.AbstractListModel() {
-            List<TipoTarea> tiposTarea=tipoTareaDao.getAll(TipoTarea.class);
+            List<TipoTarea> tiposTarea=tipoTareaDao.getByPersona(persona.getId());
             public int getSize() { return tiposTarea.size(); }
             public Object getElementAt(int i) { return tiposTarea.get(i); }
         });
@@ -169,7 +188,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         ActividadDao actividadDao=new ActividadDao();
         jList2.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jList2.setModel(new javax.swing.AbstractListModel() {
-            List<Actividad> actividades=actividadDao.getByTipoTarea("");
+            List<Actividad> actividades=new ArrayList<Actividad>();
             public int getSize() { return actividades.size(); }
             public Object getElementAt(int i) { return actividades.get(i); }
         });
@@ -523,7 +542,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jButton4)
-                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jButton5)
                                     .addComponent(jLabel8)
                                     .addComponent(jLabel9)
@@ -563,23 +582,25 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         int mes=instante.get(Calendar.MONTH);        
         instante.set(Calendar.MONTH,jComboBox1.getSelectedIndex());
         Date now=new Date();
+        //instante.add(Calendar.WEEK_OF_MONTH,-instante.get(Calendar.WEEK_OF_MONTH));
+        /*
         if(instante.getTime().getTime()>now.getTime()){
             JOptionPane.showMessageDialog(null, "No puede seleccionar un mes superior al actual");
             instante.set(Calendar.MONTH,mes);
             jComboBox1.setSelectedIndex(instante.get(Calendar.MONTH));
             return;
         }        
-        
+        */
         setWeeks();
         
-        Calendar cal=Calendar.getInstance();        
+        //Calendar cal=Calendar.getInstance();        
         
-        cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_WEEK)+2);
+        instante.add(Calendar.DAY_OF_MONTH, -instante.get(Calendar.DAY_OF_WEEK)+2);
         int[] dias=new int[5];
         for(int i=0;i<5;++i){
-            System.out.println("cal.get(Calendar.DAY_OF_MONTH)="+cal.get(Calendar.DAY_OF_MONTH));
-            dias[i]=cal.get(Calendar.DAY_OF_MONTH);
-            cal.add(Calendar.DAY_OF_MONTH, 1);
+            System.out.println("cal.get(Calendar.DAY_OF_MONTH)="+instante.get(Calendar.DAY_OF_MONTH));
+            dias[i]=instante.get(Calendar.DAY_OF_MONTH);
+            instante.add(Calendar.DAY_OF_MONTH, 1);
         }
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
 
@@ -609,7 +630,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
             return;
         
         jList2.setModel(new javax.swing.AbstractListModel() {
-            List<Actividad> actividades=actividadDao.getByTipoTarea(jList1.getSelectedValue().toString());
+            List<Actividad> actividades=actividadDao.getByTipoTarea(jList1.getSelectedValue());
             public int getSize() { return actividades.size(); }
             public Object getElementAt(int i) { return actividades.get(i); }
         });

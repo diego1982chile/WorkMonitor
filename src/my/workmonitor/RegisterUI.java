@@ -164,10 +164,10 @@ public class RegisterUI extends javax.swing.JDialog {
         
         Persona persona=new Persona();
         persona.setId(persona.getId());
-        persona.setNombre(nombre);
-        persona.setApellido(apellido);
-        persona.setUsuario(usuario);
-        persona.setPassword(passwordHelper.encriptarMD5base64(password));                        
+        persona.setNombre(nombre.trim());
+        persona.setApellido(apellido.trim());
+        persona.setUsuario(usuario.trim());
+        persona.setPassword(passwordHelper.encriptarMD5base64(password.trim()));                        
                 
         personaDao.getAll(Persona.class);
         

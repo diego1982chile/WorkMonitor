@@ -17,6 +17,7 @@ public class TipoTarea  implements java.io.Serializable {
      private int id;
      private String nombre;
      private String descripcion;
+     private Integer idPersona;
      
     // private Set actividades;//= new HashSet(0);
 
@@ -55,9 +56,17 @@ public class TipoTarea  implements java.io.Serializable {
         this.descripcion = descripcion;
     }
     
+    public Integer getIdPersona() {
+        return this.idPersona;
+    }
+    
+    public void setIdPersona(Integer idPersona) {
+        this.idPersona = idPersona;
+    }    
+    
     @Override
     public String toString() {
-        return this.getNombre();
+        return this.getNombre().trim().toUpperCase();
     }
 
     /*

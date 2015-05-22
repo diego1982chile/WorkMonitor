@@ -119,13 +119,14 @@ public class TipoUI extends javax.swing.JDialog {
         }
         
         TipoTarea tipoTarea=new TipoTarea();        
-        tipoTarea.setNombre(nombre);
-        tipoTarea.setDescripcion(descripcion);        
+        tipoTarea.setIdPersona(WorkMonitorUI.persona.getId());
+        tipoTarea.setNombre(nombre.trim().toUpperCase());
+        tipoTarea.setDescripcion(descripcion.trim().toUpperCase());        
 
-        List<TipoTarea> tiposTarea=tipoTareaDao.getByNombre(nombre);
+        List<TipoTarea> tiposTarea=tipoTareaDao.getByPersonaNombre(WorkMonitorUI.persona.getId(),nombre);
 
         if(!tiposTarea.isEmpty()){
-            JOptionPane.showMessageDialog(null, "Ya existe un tipo de tarea con este nombre");            
+            JOptionPane.showMessageDialog(null, "Ya existe un tipo de tarea con este nombre para este usuario");            
             return;
         }
 
@@ -135,7 +136,7 @@ public class TipoUI extends javax.swing.JDialog {
         }
 
         WorkMonitorUI.jList1.setModel(new javax.swing.AbstractListModel() {
-            List<TipoTarea> tiposTarea=tipoTareaDao.getAll(TipoTarea.class);
+            List<TipoTarea> tiposTarea=tipoTareaDao.getByPersona(WorkMonitorUI.persona.getId());
             public int getSize() { return tiposTarea.size(); }    
             public Object getElementAt(int i) { return tiposTarea.get(i); }
         });

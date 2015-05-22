@@ -150,8 +150,8 @@ public class TareaUI extends javax.swing.JDialog {
         }
 
         Tarea tarea=new Tarea();
-        tarea.setNombre(nombre);
-        tarea.setComentario(descripcion);
+        tarea.setNombre(nombre.trim().toUpperCase());
+        tarea.setComentario(descripcion.trim().toUpperCase());
         tarea.setTipoTarea(tipoTarea);
         tarea.setIdTipoTarea(tipoTarea.getId());
 

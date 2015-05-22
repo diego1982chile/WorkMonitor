@@ -69,6 +69,7 @@ public class Hh  implements java.io.Serializable {
     public void setComentario(String comentario) {
         this.comentario = comentario;
     }
+    
     public Integer getIdPersona() {
         return this.idPersona;
     }
@@ -76,6 +77,7 @@ public class Hh  implements java.io.Serializable {
     public void setIdPersona(Integer idPersona) {
         this.idPersona = idPersona;
     }
+    
     public Integer getIdTarea() {
         return this.idTarea;
     }
@@ -101,7 +103,7 @@ public class Hh  implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return this.getTarea().getNombre();
+        return this.getTarea().getNombre().trim().toUpperCase();
     }
     
     @Override

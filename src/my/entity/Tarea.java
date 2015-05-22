@@ -70,7 +70,7 @@ public class Tarea  implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return this.getNombre();
+        return this.getNombre().trim().toUpperCase();
     }
 }
 
