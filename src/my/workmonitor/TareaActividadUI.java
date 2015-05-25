@@ -268,7 +268,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
 
         jList2.setModel(new javax.swing.AbstractListModel() {
             TipoTarea tipoTarea=(TipoTarea)jList1.getModel().getElementAt(0);
-            List<Actividad> actividades=actividadDao.getByTipoTarea(tipoTarea.getNombre());
+            List<Actividad> actividades=actividadDao.getByTipoTarea(tipoTarea);
             public int getSize() { return actividades.size(); }
             public Object getElementAt(int i) { return actividades.get(i); }
         });
@@ -298,13 +298,23 @@ public class TareaActividadUI extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Debe seleccionar al menos una actividad para asociar a un tipo de tarea");
             return;
         }
-
-        boolean interseccion=!actividadesPorTareas.retainAll(actividades);
-                
-        System.out.println("interseccion="+interseccion);
-        //System.out.println("actividades.retainAll(actividadesPorTareas)="+actividades.retainAll(actividadesPorTareas));        
         
-        if(interseccion && !actividadesPorTareas.isEmpty()){
+        for(int i=0;i<actividades.size();++i)
+            System.out.println("actividades.get(i).getNombre()="+actividades.get(i).getNombre());
+
+        for(int i=0;i<actividadesPorTareas.size();++i)
+            System.out.println("actividadesPorTarea.get(i).getNombre()="+actividadesPorTareas.get(i).getNombre());        
+        
+        System.out.println("actividadesPorTareas.size()1="+actividadesPorTareas.size());
+        
+        boolean interseccion=!actividadesPorTareas.retainAll(actividades);
+        
+        System.out.println("actividadesPorTareas.size()2="+actividadesPorTareas.size());
+                
+        //System.out.println("interseccion="+interseccion);
+        //System.out.println("actividades.retainAll(actividadesPorTareas)="+actividades.retainAll(actividadesPorTareas));                
+                
+        if(actividadesPorTareas.size()>0 && !actividadesPorTareas.isEmpty()){
             JOptionPane.showMessageDialog(null, "Está intentando asignar actividades que ya han sido asignadas. Por favor descartelas");
             return;
         }                

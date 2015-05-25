@@ -73,56 +73,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         this.setTitle("HH "+persona.getUsuario().toString());
         jComboBox1.setSelectedIndex(instante.get(Calendar.MONTH));     
         //jTable1.getColumn(jTable1.getColumnName(instante.get(Calendar.DAY_OF_WEEK))).setHeaderRenderer(new TableCellRenderer()        
-    }
-    
-    public void setWeeks(){        
-        
-        Calendar cal=Calendar.getInstance();        
-        cal.set(Calendar.MONTH, jComboBox1.getSelectedIndex());
-        cal.setMinimalDaysInFirstWeek(2);
-        int sem=cal.get(Calendar.WEEK_OF_MONTH);  
-        System.out.println("sem="+sem);  
-        System.out.println("Primero cal.get(Calendar.WEEK_OF_MONTH)="+cal.get(Calendar.WEEK_OF_MONTH));
-        if()
-        cal.add(Calendar.WEEK_OF_MONTH,-sem);
-        System.out.println("Primero cal.get(Calendar.WEEK_OF_MONTH)="+cal.get(Calendar.WEEK_OF_MONTH));
-        cal.set(Calendar.WEEK_OF_MONTH,1);  
-        System.out.println("Primero cal.get(Calendar.WEEK_OF_MONTH)="+cal.get(Calendar.WEEK_OF_MONTH));
-        
-        int mes=cal.get(Calendar.MONTH);
-        int weeks=1;        
-        
-        Hashtable<Integer, JLabel> table = new Hashtable<Integer, JLabel>();
-        
-        while(mes==cal.get(Calendar.MONTH)){
-            System.out.println("cal.get(Calendar.WEEK_OF_MONTH)="+cal.get(Calendar.WEEK_OF_MONTH));
-            cal.add(Calendar.WEEK_OF_MONTH, 1); 
-            table.put (weeks, new JLabel(String.valueOf(weeks)));
-            weeks++;
-        }  
-        if(cal.get(Calendar.WEEK_OF_MONTH)>0)
-            weeks=weeks-cal.get(Calendar.WEEK_OF_MONTH)+1;
-        table.put (weeks, new JLabel(String.valueOf(weeks)));
-        jSlider1.setMaximum(weeks);        
-        jSlider1.setValue(instante.get(Calendar.WEEK_OF_MONTH)); 
-        jSlider1.setLabelTable(table);
-        setLabels();
-        System.out.println("Calendar.WEEK_OF_MONTH="+cal.get(Calendar.WEEK_OF_MONTH));
-        cal.set(Calendar.WEEK_OF_MONTH,sem);  
-        System.out.println("weeks="+(weeks));        
-    }
-    
-    public void setLabels(){
-        Font font = jSlider1.getFont();
-        Dictionary dict = jSlider1.getLabelTable();
-        Enumeration e = dict.elements();
-        while ( e.hasMoreElements() ) {
-            Object element = e.nextElement();
-            if ( element instanceof JComponent ) {
-                ((JComponent)element).setFont( font );
-            }
-    }
-    }
+    }        
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -578,22 +529,30 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
-        int mes=instante.get(Calendar.MONTH);        
-        instante.set(Calendar.MONTH,jComboBox1.getSelectedIndex());
-        Date now=new Date();
-        //instante.add(Calendar.WEEK_OF_MONTH,-instante.get(Calendar.WEEK_OF_MONTH));
-        /*
-        if(instante.getTime().getTime()>now.getTime()){
-            JOptionPane.showMessageDialog(null, "No puede seleccionar un mes superior al actual");
-            instante.set(Calendar.MONTH,mes);
-            jComboBox1.setSelectedIndex(instante.get(Calendar.MONTH));
-            return;
-        }        
-        */
-        setWeeks();
+        // TODO add your handling code here:        
+        instante.setMinimalDaysInFirstWeek(3);
+        instante.set(Calendar.MONTH,jComboBox1.getSelectedIndex());        
+        System.out.println("instante.getActualMaximum(Calendar.WEEK_OF_MONTH)="+instante.getActualMaximum(Calendar.WEEK_OF_MONTH));                        
         
-        //Calendar cal=Calendar.getInstance();        
+        int semanas=instante.getActualMaximum(Calendar.WEEK_OF_MONTH);
+        
+        //if(semanas>5)
+           // semanas=5;
+        
+        int cont=1;
+        
+        Hashtable<Integer, JLabel> table = new Hashtable<Integer, JLabel>();
+        
+        while(cont<=semanas){                        
+            table.put (cont, new JLabel(String.valueOf(cont)));
+            cont++;
+        }  
+                
+        System.out.println("instante.get(Calendar.WEEK_OF_MONTH)="+instante.get(Calendar.WEEK_OF_MONTH));
+        jSlider1.setMaximum(semanas);        
+        jSlider1.setValue(instante.get(Calendar.WEEK_OF_MONTH)); 
+        jSlider1.setLabelTable(table);
+        //setLabels();
         
         instante.add(Calendar.DAY_OF_MONTH, -instante.get(Calendar.DAY_OF_WEEK)+2);
         int[] dias=new int[5];

@@ -26,7 +26,8 @@ public class TareaActividadDao {
         Serializable identity=0;
         try {
             tx = session.beginTransaction();                
-            identity=session.save(o);             
+            identity=session.save(o);          
+            System.out.println("identity="+identity);
             tx.commit();
         }
         catch (Exception e) {
@@ -43,11 +44,11 @@ public class TareaActividadDao {
       //return (T) sessionFactory.getCurrentSession().save(o);
         final Session session = HibernateUtil.sessionFactory.openSession();
         Transaction tx = null;
-        Serializable identity=0;
-        try {
+        Serializable identity=0;        
+        try {            
             tx = session.beginTransaction();                
-            for(int i=0;i<l.size();++i) {                                
-                identity=session.save(l.get(i));
+            for(int i=0;i<l.size();++i) {                                                
+                identity=session.save(l.get(i));                
                 if(identity==(Serializable)0){
                     throw new Exception();
                 }
@@ -107,7 +108,7 @@ public class TareaActividadDao {
       .setInteger("idTarea", idTarea)      
       .setInteger("idActividad", idActividad)      
       .list();      
-      session.close();
+      //session.close();
       return (T) result;
     }    
 

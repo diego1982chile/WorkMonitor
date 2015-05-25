@@ -145,7 +145,7 @@ public class ActividadDao {
       ThreadLocalSessionContext.bind(session);
       //final Session session = HibernateUtil.getSession(sessionFactory);
       final Criteria crit = session.createCriteria(type);      
-      //session.close();
+      session.close();
       return crit.list();
     }  
     
