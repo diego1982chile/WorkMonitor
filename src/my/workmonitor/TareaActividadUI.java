@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableCellRenderer;
 import my.dao.ActividadDao;
 import my.dao.TareaActividadDao;
 import my.dao.TareaDao;
@@ -32,7 +33,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
     private static TipoTareaDao tipoTareaDao= new TipoTareaDao();
     private static TareaDao tareaDao= new TareaDao(); 
     private static ActividadDao actividadDao= new ActividadDao(); 
-    private static TareaActividadDao tareaActividadDao= new TareaActividadDao(); 
+    private static TareaActividadDao tareaActividadDao= new TareaActividadDao();     
     
     
     public TareaActividadUI(java.awt.Frame parent, boolean modal) {
