@@ -129,7 +129,7 @@ public class HhDao {
       return crit.list();
     }    
     
-    public <T> Object[][] getBySemana(final Date fecha) {
+    public <T> Object[][] getBySemana(Integer idPersona, final Date fecha) {
       //final Session session = sessionFactory.getCurrentSession();            
       Calendar c1 = Calendar.getInstance();
       Calendar c2 = Calendar.getInstance();
@@ -140,10 +140,11 @@ public class HhDao {
       c2.add(Calendar.DATE, -dayOfWeek+6);  // number of days to add                  
                   
       final Session session = HibernateUtil.sessionFactory.openSession();      
-      String sql = "select hh from Hh hh inner join hh.tarea t where hh.dia between ? and ? order by dia, hora";
+      String sql = "select hh from Hh hh inner join hh.tarea t where hh.idPersona = ? and hh.dia between ? and ? order by dia, hora";
       List result = session.createQuery(sql)
-      .setDate(0, c1.getTime())      
-      .setDate(1, c2.getTime())        
+      .setInteger(0, idPersona)
+      .setDate(1, c1.getTime())      
+      .setDate(2, c2.getTime())        
       .list();
                     
       Object[][] matrizHh = new Object[29][5];

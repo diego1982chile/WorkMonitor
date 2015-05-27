@@ -125,7 +125,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jButton12 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(898, 685));
         setPreferredSize(new java.awt.Dimension(898, 685));
 
@@ -199,7 +199,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         }
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
 
-            hhDao.getBySemana(instante.getTime())
+            hhDao.getBySemana(persona.getId(),instante.getTime())
             ,
             new String [] {
                 "Lunes"+dias[0],
@@ -590,7 +590,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         }
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
 
-            hhDao.getBySemana(instante.getTime())
+            hhDao.getBySemana(persona.getId(),instante.getTime())
             ,
             new String [] {
                 "Lunes "+dias[0],
@@ -721,7 +721,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton8ActionPerformed
 
-    public void highlightDay(){
+    public static void highlightDay(){
         Calendar cal=Calendar.getInstance(); 
         int mes=cal.get(Calendar.MONTH);
         int sem=cal.get(Calendar.WEEK_OF_MONTH);        
@@ -731,25 +731,13 @@ public class WorkMonitorUI extends javax.swing.JFrame {
            // Y otra porque el indice de la tabla empieza desde 0 y no desde 1
            System.out.println("cal.get(Calendar.DAY_OF_WEEK)="+(cal.get(Calendar.DAY_OF_WEEK)-2));
            column=jTable1.getColumnModel().getColumn(cal.get(Calendar.DAY_OF_WEEK)-2);
-           column.setCellRenderer(columnRenderer); 
-           System.out.println("column="+column);   
-           jTable1.setRowSelectionInterval(0, 1);
+           column.setCellRenderer(columnRenderer);            
+           System.out.println("column="+column);              
            //row=jTable1.
         }
     }
     
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:        
-        System.out.println("instante.getTime().toString()="+instante.getTime().toString());
-        if(jSlider1.getValue()==jSlider1.getMinimum()){
-            JOptionPane.showMessageDialog(null, "No existen más semanas para este mes. Seleccione el mes anterior");            
-            return;
-        }
-        System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));
-        instante.add(Calendar.WEEK_OF_MONTH, -1);
-        
-        System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));
-
+    public static void refreshTable(){
         instante.add(Calendar.DAY_OF_MONTH, -instante.get(Calendar.DAY_OF_WEEK)+2);
         int[] dias=new int[5];
         for(int i=0;i<5;++i){
@@ -759,7 +747,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         }
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
 
-            hhDao.getBySemana(instante.getTime())
+            hhDao.getBySemana(persona.getId(),instante.getTime())
             ,
             new String [] {
                 "Lunes "+dias[0],
@@ -768,9 +756,20 @@ public class WorkMonitorUI extends javax.swing.JFrame {
                 "Jueves "+dias[3],
                 "Viernes "+dias[4]
             }
-        ));
-        jSlider1.setValue(jSlider1.getValue()-1);
+        ));        
         highlightDay();        
+    }
+    
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:        
+        System.out.println("instante.getTime().toString()="+instante.getTime().toString());
+        if(jSlider1.getValue()==jSlider1.getMinimum()){
+            JOptionPane.showMessageDialog(null, "No existen más semanas para este mes. Seleccione el mes anterior");            
+            return;
+        }        
+        instante.add(Calendar.WEEK_OF_MONTH, -1);
+        jSlider1.setValue(jSlider1.getValue()-1);
+        refreshTable();            
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
@@ -781,28 +780,8 @@ public class WorkMonitorUI extends javax.swing.JFrame {
             return;
         }
         instante.add(Calendar.WEEK_OF_MONTH, 1);        
-
-        instante.add(Calendar.DAY_OF_MONTH, -instante.get(Calendar.DAY_OF_WEEK)+2);
-        int[] dias=new int[5];
-        for(int i=0;i<5;++i){
-            System.out.println("cal.get(Calendar.DAY_OF_MONTH)="+instante.get(Calendar.DAY_OF_MONTH));
-            dias[i]=instante.get(Calendar.DAY_OF_MONTH);
-            instante.add(Calendar.DAY_OF_MONTH, 1);
-        }
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-
-            hhDao.getBySemana(instante.getTime())
-            ,
-            new String [] {
-                "Lunes "+dias[0],
-                "Martes "+dias[1],
-                "Miércoles "+dias[2],
-                "Jueves "+dias[3],
-                "Viernes "+dias[4]
-            }
-        ));
         jSlider1.setValue(jSlider1.getValue()+1);
-        highlightDay();
+        refreshTable();          
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed

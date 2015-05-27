@@ -49,6 +49,7 @@ public class LoginUI extends javax.swing.JDialog {
         jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setModalityType(null);
 
         jLabel1.setBackground(new java.awt.Color(123, 153, 172));
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -175,7 +176,8 @@ public class LoginUI extends javax.swing.JDialog {
         }
         if(personas.size()==1){
             WorkMonitorUI workMonitorUI=new WorkMonitorUI(personas.get(0).getId());
-            workMonitorUI.setVisible(true);            
+            workMonitorUI.setVisible(true);         
+            //this.setEnabled(false);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

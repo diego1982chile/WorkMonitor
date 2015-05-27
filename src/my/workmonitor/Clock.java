@@ -26,7 +26,7 @@ public class Clock {
     
     public ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();   
     protected Calendar instante;
-    protected HhDao hhDao=new HhDao();
+
     protected SimpleDateFormat sdf= new SimpleDateFormat("EEEE d 'de' MMMM 'de' yyyy HH:mm:ss", Locale.getDefault());
 
     Clock(){

@@ -86,15 +86,18 @@ public class Timer {
                             hhList.get(0).setIdTarea(tareaActual);
                             hhList.get(0).setIdPersona(personaActual);                            
                             hhDao.update(hhList.get(0));
+                        }                        
+                        int mes=instante.get(Calendar.MONTH);
+                        int sem=instante.get(Calendar.WEEK_OF_MONTH);   
+                        
+                        System.out.println("WorkMonitorUI.instante.get(Calendar.WEEK_OF_MONTH)="+
+                        WorkMonitorUI.instante.get(Calendar.WEEK_OF_MONTH));
+
+                        if(WorkMonitorUI.instante.get(Calendar.MONTH)==mes && 
+                           WorkMonitorUI.instante.get(Calendar.WEEK_OF_MONTH)==sem){
+                            WorkMonitorUI.refreshTable();
                         }
-                        WorkMonitorUI.jTable1.setModel(new javax.swing.table.DefaultTableModel(
-                            hhDao.getBySemana(new Date())
-                            ,
-                            new String [] {
-                                "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
-                            }
-                        ));
-                        WorkMonitorUI.instante.set(Calendar.WEEK_OF_MONTH,instante.get(Calendar.WEEK_OF_MONTH));
+                        //WorkMonitorUI.instante.set(Calendar.WEEK_OF_MONTH,instante.get(Calendar.WEEK_OF_MONTH));
                         //WorkMonitorUI.jLabel4.setText(WorkMonitorUI.instante.get(Calendar.WEEK_OF_MONTH)+"ª SEMANA"); 
                    }
                 }
