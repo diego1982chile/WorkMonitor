@@ -5,6 +5,7 @@
  */
 package my.workmonitor;
 
+import excel.PoiWriteExcelFile;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -581,29 +582,12 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jSlider1.setValue(instante.get(Calendar.WEEK_OF_MONTH)); 
         jSlider1.setLabelTable(table);                      
         
-        instante.add(Calendar.DAY_OF_MONTH, -instante.get(Calendar.DAY_OF_WEEK)+2);
-        int[] dias=new int[5];
-        for(int i=0;i<5;++i){
-            System.out.println("cal.get(Calendar.DAY_OF_MONTH)="+instante.get(Calendar.DAY_OF_MONTH));
-            dias[i]=instante.get(Calendar.DAY_OF_MONTH);
-            instante.add(Calendar.DAY_OF_MONTH, 1);
-        }
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-
-            hhDao.getBySemana(persona.getId(),instante.getTime())
-            ,
-            new String [] {
-                "Lunes "+dias[0],
-                "Martes "+dias[1],
-                "Miércoles "+dias[2],
-                "Jueves "+dias[3],
-                "Viernes "+dias[4]
-            }        
-        )); 
+        refreshTable();
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
+        PoiWriteExcelFile.generarReporte();
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged

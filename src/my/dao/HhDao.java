@@ -154,7 +154,63 @@ public class HhDao {
       dia.set(Calendar.DAY_OF_WEEK,2);
       
       Calendar hora= Calendar.getInstance();
-      //instante.set(Calendar.DAY_OF_MONTH,1);
+
+      hora.set(Calendar.HOUR_OF_DAY, 9);
+      hora.set(Calendar.MINUTE, 0);
+      hora.set(Calendar.SECOND,0);
+            
+      SimpleDateFormat sdfDia=new SimpleDateFormat("yyyy-MM-dd");      
+      SimpleDateFormat sdfHora=new SimpleDateFormat("HH:mm:ss");
+      
+      for(int i=0;i<5;++i){       
+          hora.set(Calendar.HOUR_OF_DAY, 9);
+          hora.set(Calendar.MINUTE, 0);
+          hora.set(Calendar.SECOND,0);
+          for(int j=0;j<29;++j){              
+            Hh hh=new Hh();
+            hh.setDia(dia.getTime());
+            hh.setHora(Time.valueOf(sdfHora.format(hora.getTime())));
+            int indice;            
+            //System.out.println("sdfDia.format(hh.getDia())="+sdfDia.format(hh.getDia()));            
+            //System.out.println("sdfHora.format(hora.getTime())="+sdfHora.format(hh.getHora()));
+            if((indice=result.indexOf(hh))!=-1)                
+                matrizHh[j][i]=result.get(indice);                                
+            else
+                matrizHh[j][i]=null;                   
+            hora.add(Calendar.MINUTE, 30);
+          }
+          dia.add(Calendar.DAY_OF_WEEK, 1);
+      }
+      session.close();
+      return matrizHh;
+    }
+    
+    public <T> Object[][] getByMes(Integer idPersona, final Date fecha) {
+      //final Session session = sessionFactory.getCurrentSession();            
+      Calendar c1 = Calendar.getInstance();
+      Calendar c2 = Calendar.getInstance();
+      c1.setTime(fecha);
+      c2.setTime(fecha);            
+      
+      c1.add(Calendar.DAY_OF_MONTH, -c1.get(Calendar.DAY_OF_MONTH)+1);            
+      c2.add(Calendar.DAY_OF_MONTH, -c2.get(Calendar.DAY_OF_MONTH)+c2.getActualMaximum(Calendar.DAY_OF_MONTH));                  
+                  
+      final Session session = HibernateUtil.sessionFactory.openSession();      
+      String sql = "select hh from Hh hh inner join hh.tarea t where hh.idPersona = ? and hh.dia between ? and ? order by dia, hora";
+      List result = session.createQuery(sql)
+      .setInteger(0, idPersona)
+      .setDate(1, c1.getTime())      
+      .setDate(2, c2.getTime())        
+      .list();
+                    
+      Object[][] matrizHh = new Object[29][5];
+      
+      Calendar dia= Calendar.getInstance();
+      
+      dia.set(Calendar.DAY_OF_WEEK,2);
+      
+      Calendar hora= Calendar.getInstance();
+
       hora.set(Calendar.HOUR_OF_DAY, 9);
       hora.set(Calendar.MINUTE, 0);
       hora.set(Calendar.SECOND,0);

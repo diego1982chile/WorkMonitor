@@ -36,6 +36,14 @@ public class Clock {
             public void run() {                                     
                 instante= Calendar.getInstance();                                                                                                    
                 WorkMonitorUI.jLabel6.setText(sdf.format(instante.getTime()));
+                
+                int hora=instante.get(Calendar.HOUR_OF_DAY);
+                int minuto=instante.get(Calendar.MINUTE);
+
+                if(Arrays.asList(9,10,11,12,13,14,15,16,17,18,19,20,21,22,23).contains(hora)){
+                    if(minuto==30 || minuto==0)
+                        WorkMonitorUI.refreshTable();
+                }
             }
         }, 0, 1, TimeUnit.SECONDS);                
     }
