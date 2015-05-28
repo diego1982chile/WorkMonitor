@@ -203,11 +203,9 @@ public class HhDao {
       .setDate(2, c2.getTime())        
       .list();
                     
-      Object[][] matrizHh = new Object[29][5];
+      Object[][] matrizHh = new Object[29][c2.getActualMaximum(Calendar.DAY_OF_MONTH)];
       
-      Calendar dia= Calendar.getInstance();
-      
-      dia.set(Calendar.DAY_OF_WEEK,2);
+      Calendar dia= Calendar.getInstance();            
       
       Calendar hora= Calendar.getInstance();
 
@@ -216,9 +214,12 @@ public class HhDao {
       hora.set(Calendar.SECOND,0);
             
       SimpleDateFormat sdfDia=new SimpleDateFormat("yyyy-MM-dd");      
-      SimpleDateFormat sdfHora=new SimpleDateFormat("HH:mm:ss");
+      SimpleDateFormat sdfHora=new SimpleDateFormat("HH:mm:ss");  
       
-      for(int i=0;i<5;++i){       
+      System.out.println("cal.getActualMaximum(Calendar.DAY_OF_MONTH)4="+hora.getActualMaximum(Calendar.DAY_OF_MONTH));
+      
+      /*
+      for(int i=0;i<c2.getActualMaximum(Calendar.DAY_OF_MONTH);++i){       
           hora.set(Calendar.HOUR_OF_DAY, 9);
           hora.set(Calendar.MINUTE, 0);
           hora.set(Calendar.SECOND,0);
@@ -227,16 +228,44 @@ public class HhDao {
             hh.setDia(dia.getTime());
             hh.setHora(Time.valueOf(sdfHora.format(hora.getTime())));
             int indice;            
-            //System.out.println("sdfDia.format(hh.getDia())="+sdfDia.format(hh.getDia()));            
-            //System.out.println("sdfHora.format(hora.getTime())="+sdfHora.format(hh.getHora()));
             if((indice=result.indexOf(hh))!=-1)                
                 matrizHh[j][i]=result.get(indice);                                
             else
-                matrizHh[j][i]=null;                   
+                matrizHh[j][i]="";                   
             hora.add(Calendar.MINUTE, 30);
           }
-          dia.add(Calendar.DAY_OF_WEEK, 1);
+          dia.add(Calendar.DAY_OF_MONTH, 1);
       }
+      */
+      
+      dia.add(Calendar.MONTH,1);
+      dia.set(Calendar.DAY_OF_MONTH,1);
+      
+      hora.set(Calendar.HOUR_OF_DAY, 9);
+      hora.set(Calendar.MINUTE, 0);
+      hora.set(Calendar.SECOND,0);
+      
+      for(int i=0;i<29;++i){       
+          dia.add(Calendar.MONTH,-1);
+          dia.set(Calendar.DAY_OF_MONTH,1);          
+          for(int j=0;j<c2.getActualMaximum(Calendar.DAY_OF_MONTH);++j){              
+            Hh hh=new Hh();
+            hh.setDia(dia.getTime());
+            hh.setHora(Time.valueOf(sdfHora.format(hora.getTime())));
+            System.out.println("sdfDia.format(hh.getDia())="+sdfDia.format(hh.getDia()));            
+            System.out.println("sdfHora.format(hora.getTime())="+sdfHora.format(hh.getHora()));
+            int indice;            
+            if((indice=result.indexOf(hh))!=-1){               
+                System.out.println("ENCONTRE");
+                matrizHh[i][j]=result.get(indice);                                
+            }
+            else
+                matrizHh[i][j]="";                   
+            dia.add(Calendar.DAY_OF_MONTH, 1);
+          }
+          hora.add(Calendar.MINUTE, 30);          
+      }
+      
       session.close();
       return matrizHh;
     }

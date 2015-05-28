@@ -88,7 +88,9 @@ public class PoiWriteExcelFile {
             
             int diasMes=cal.getActualMaximum(Calendar.DAY_OF_MONTH);
             
-            sdf=new SimpleDateFormat("EEEE d");  
+            sdf=new SimpleDateFormat("EEEE d");                          
+            
+            System.out.println("cal.getActualMaximum(Calendar.DAY_OF_MONTH)1="+cal.getActualMaximum(Calendar.DAY_OF_MONTH));
             
             for(int i=0;i<diasMes;++i){
                 cellXn = row2.createCell((short) i+1);  
@@ -97,23 +99,36 @@ public class PoiWriteExcelFile {
                 cal.add(Calendar.DAY_OF_MONTH, 1);    
             }
             
-            HhDao hhDao= new HhDao();            
-            Object[][] hh=hhDao.getBySemana(WorkMonitorUI.persona.getId(),cal.getTime());
-                              
-            Sheet sheet = workbook.getSheetAt(0);
+            System.out.println("cal.getActualMaximum(Calendar.DAY_OF_MONTH)2="+cal.getActualMaximum(Calendar.DAY_OF_MONTH));
             
-            for(int i=0;i<5;++i){       
-                Row r = sheet.getRow(i+2);                
-                for(int j=0;j<29;++j){                   
+            // Retroceder mes para que quede como estaba
+            cal.add(Calendar.MONTH, -1);    
+            
+            System.out.println("cal.getActualMaximum(Calendar.DAY_OF_MONTH)3="+cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+            
+            HhDao hhDao= new HhDao();            
+            Object[][] hh= new Object[29][cal.getActualMaximum(Calendar.DAY_OF_MONTH)];
+            
+            hh=hhDao.getByMes(WorkMonitorUI.persona.getId(),cal.getTime());
+            
+            System.out.println("hh[0][0]="+hh[0][0].toString());                
+            
+            Sheet sheet = workbook.getSheetAt(0);                        
+            
+            for(int i=0;i<29;++i){                 
+                Row r = sheet.getRow(i+2);
+                for(int j=0;j<diasMes;++j){                          
                   if(hh[i][j]!=null){               
-                      cellXn = row2.createCell((short) j+1);                                 
+                      cellXn = (HSSFCell) r.createCell((short)j+1); 
+                      cellXn.setCellValue(hh[i][j].toString()); 
                   }
                   else{
-                      cellXn = row2.createCell((short) j+1);                                    
+                      cellXn = row2.createCell((short)j+1);   
+                      cellXn.setCellValue(""); 
                   }                
+                }
             }
-                        
-            
+                           
             sheet.autoSizeColumn(0);
 
             workbook.write(fileOut);
