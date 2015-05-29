@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -44,6 +45,8 @@ public class Timer {
             public void run() {    
                 if(activo){                   
                    instante= Calendar.getInstance();
+                   //instante.setTimeZone(TimeZone.getTimeZone("America/Santiago"));
+                   System.out.println( "TimeZone.getDefault().getDisplayName()="+TimeZone.getDefault().getDisplayName() ); 
                    
                    int hora=instante.get(Calendar.HOUR_OF_DAY);
                    int minuto=instante.get(Calendar.MINUTE);

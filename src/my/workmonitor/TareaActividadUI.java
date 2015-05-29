@@ -304,7 +304,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
         System.out.println("interseccion="+interseccion);
         //System.out.println("actividades.retainAll(actividadesPorTareas)="+actividades.retainAll(actividadesPorTareas));        
         
-        if(interseccion){
+        if(interseccion && !actividadesPorTareas.isEmpty()){
             JOptionPane.showMessageDialog(null, "Está intentando asignar actividades que ya han sido asignadas. Por favor descartelas");
             return;
         }                
@@ -345,12 +345,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // TODO add your handling code here:
-        TipoTarea tipoTarea=(TipoTarea)jList1.getSelectedValue();
-        if(tipoTarea==null){
-            JOptionPane.showMessageDialog(null, "Debe seleccionar un tipo de tarea");
-            return;
-        }
+        // TODO add your handling code here:                
         ActividadUI actividadUI=new ActividadUI(null, true);
         actividadUI.setVisible(true);
     }//GEN-LAST:event_jButton7ActionPerformed
