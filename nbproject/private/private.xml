@@ -5,10 +5,11 @@
         <group>
             <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/entity/Actividad.hbm.xml</file>
             <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/entity/TipoTarea.hbm.xml</file>
-            <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/entity/Hh.hbm.xml</file>
             <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/dao/HhDao.java</file>
+            <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/entity/Hh.hbm.xml</file>
             <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/workmonitor/Timer.java</file>
             <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/excel/PoiWriteExcelFile.java</file>
+            <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/entity/Hh.java</file>
             <file>file:/D:/Diego/NetBeansProjects/WorkMonitor/src/my/workmonitor/WorkMonitorUI.java</file>
         </group>
     </open-files>

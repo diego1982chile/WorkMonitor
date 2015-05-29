@@ -77,7 +77,8 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         instante.setMinimalDaysInFirstWeek(2);
         persona=personaDao.get(Persona.class, (Integer)idPersona);
         initComponents();                                     
-        this.setTitle("HH "+persona.getUsuario().toString());
+        this.setTitle("HH_"+instante.getDisplayName(Calendar.MONTH, Calendar.SHORT_FORMAT, Locale.getDefault()).toUpperCase()+"_"+
+                      persona.getNombre().toUpperCase().charAt(0)+"."+persona.getApellido().toUpperCase()+"_"+instante.get(Calendar.YEAR));
         jComboBox1.setSelectedIndex(instante.get(Calendar.MONTH));                                   
         highlightDay();
         //jTable1.getColumn(jTable1.getColumnName(instante.get(Calendar.DAY_OF_WEEK))).setHeaderRenderer(new TableCellRenderer()        
@@ -587,7 +588,17 @@ public class WorkMonitorUI extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        PoiWriteExcelFile.generarReporte();
+        switch(PoiWriteExcelFile.generarReporte()){
+            case 1:
+                JOptionPane.showMessageDialog(null, "Planilla de HH generada exitósamente");
+                break;
+            case -1:
+                JOptionPane.showMessageDialog(null, "Hubo problemas al generar la planilla de HH. El archivo está actualmente en uso");
+                break;
+            case -2:
+                JOptionPane.showMessageDialog(null, "Hubo problemas al generar la planilla de HH. Excepción de I/O");
+                break;
+        }                                            
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged

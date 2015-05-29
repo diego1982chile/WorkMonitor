@@ -35,7 +35,7 @@ public class Clock {
             @Override
             public void run() {                                     
                 instante= Calendar.getInstance();                                                                                                    
-                WorkMonitorUI.jLabel6.setText(sdf.format(instante.getTime()));
+                WorkMonitorUI.jLabel6.setText(sdf.format(instante.getTime()).toUpperCase());
                 
                 int hora=instante.get(Calendar.HOUR_OF_DAY);
                 int minuto=instante.get(Calendar.MINUTE);
