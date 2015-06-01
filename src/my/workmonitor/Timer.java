@@ -5,6 +5,7 @@
  */
 package my.workmonitor;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,6 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 import static jdk.nashorn.internal.objects.NativeRegExp.exec;
 import static jdk.nashorn.internal.runtime.ScriptingFunctions.exec;
 import my.dao.HhDao;
@@ -42,7 +44,7 @@ public class Timer {
         
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
-            public void run() {    
+            public void run() { 
                 if(activo){                   
                    instante= Calendar.getInstance();
                    //instante.setTimeZone(TimeZone.getTimeZone("America/Santiago"));
@@ -94,7 +96,7 @@ public class Timer {
                         WorkMonitorUI.instante.get(Calendar.WEEK_OF_MONTH));
 
                         if(WorkMonitorUI.instante.get(Calendar.MONTH)==mes && 
-                           WorkMonitorUI.instante.get(Calendar.WEEK_OF_MONTH)==sem){
+                           WorkMonitorUI.instante.get(Calendar.WEEK_OF_MONTH)==sem){                            
                             WorkMonitorUI.refreshTable();
                         }
                         //WorkMonitorUI.instante.set(Calendar.WEEK_OF_MONTH,instante.get(Calendar.WEEK_OF_MONTH));
@@ -102,7 +104,7 @@ public class Timer {
                    }
                 }
             }
-        }, 0, 5, TimeUnit.SECONDS);                
+        }, 0, 5, TimeUnit.SECONDS);                        
     }
 
     public void setTareaActual(Integer tareaActual){

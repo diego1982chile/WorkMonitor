@@ -21,11 +21,13 @@ import java.util.List;
 import java.util.Locale;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
@@ -72,7 +74,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         initComponents();
     }
     
-    public WorkMonitorUI(Serializable idPersona) {        
+    public WorkMonitorUI(Serializable idPersona) {            
         instante= Calendar.getInstance();   
         instante.setMinimalDaysInFirstWeek(2);
         persona=personaDao.get(Persona.class, (Integer)idPersona);
@@ -127,7 +129,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jButton12 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(898, 685));
         setPreferredSize(new java.awt.Dimension(898, 685));
 
@@ -408,20 +410,23 @@ public class WorkMonitorUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(4, 4, 4)
-                        .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(4, 4, 4)
+                                .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jButton2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -542,7 +547,8 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // TODO add your handling code here:    
         System.out.println("instante.getTime().toString()="+instante.getTime().toString());
-        instante.setMinimalDaysInFirstWeek(3);
+        instante.setMinimalDaysInFirstWeek(3);        
+        
         instante.set(Calendar.MONTH,jComboBox1.getSelectedIndex()); 
         
         if(jComboBox1.getSelectedIndex()<instante.get(Calendar.MONTH)){
@@ -556,10 +562,14 @@ public class WorkMonitorUI extends javax.swing.JFrame {
             instante.set(Calendar.MONTH,jComboBox1.getSelectedIndex()); 
         }
         
-        if(instante.get(Calendar.DAY_OF_WEEK)==1)
-            instante.add(Calendar.DAY_OF_WEEK, -2);
-        if(instante.get(Calendar.DAY_OF_WEEK)==7)
+        System.out.println("instante.get(Calendar.DAY_OF_WEEK)primero="+instante.get(Calendar.DAY_OF_WEEK)); 
+                
+        if(instante.get(Calendar.DAY_OF_WEEK)==7){
             instante.add(Calendar.DAY_OF_WEEK, 1);
+        }
+        if(instante.get(Calendar.DAY_OF_WEEK)==1){
+            instante.add(Calendar.DAY_OF_WEEK, -2);
+        }
             
         System.out.println("jComboBox1.getSelectedIndex()="+jComboBox1.getSelectedIndex());                        
         System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));                        
@@ -579,7 +589,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
                 
         System.out.println("cal.get(Calendar.DAY_OF_MONTH)="+instante.get(Calendar.DAY_OF_MONTH));
         System.out.println("instante.get(Calendar.WEEK_OF_MONTH)="+instante.get(Calendar.WEEK_OF_MONTH));
-        jSlider1.setMaximum(semanas);        
+        jSlider1.setMaximum(semanas);                
         jSlider1.setValue(instante.get(Calendar.WEEK_OF_MONTH)); 
         jSlider1.setLabelTable(table);                      
         
@@ -733,26 +743,33 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     }
     
     public static void refreshTable(){
-        instante.add(Calendar.DAY_OF_MONTH, -instante.get(Calendar.DAY_OF_WEEK)+2);
-        int[] dias=new int[5];
-        for(int i=0;i<5;++i){
-            System.out.println("cal.get(Calendar.DAY_OF_MONTH)="+instante.get(Calendar.DAY_OF_MONTH));
-            dias[i]=instante.get(Calendar.DAY_OF_MONTH);
-            instante.add(Calendar.DAY_OF_MONTH, 1);
-        }
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-
-            hhDao.getBySemana(persona.getId(),instante.getTime())
-            ,
-            new String [] {
-                "Lunes "+dias[0],
-                "Martes "+dias[1],
-                "Miércoles "+dias[2],
-                "Jueves "+dias[3],
-                "Viernes "+dias[4]
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+              // Here, we can safely update the GUI
+              // because we'll be called from the
+              // event dispatch thread
+            instante.add(Calendar.DAY_OF_MONTH, -instante.get(Calendar.DAY_OF_WEEK)+2);
+            int[] dias=new int[5];
+            for(int i=0;i<5;++i){
+                System.out.println("cal.get(Calendar.DAY_OF_MONTH)="+instante.get(Calendar.DAY_OF_MONTH));
+                dias[i]=instante.get(Calendar.DAY_OF_MONTH);
+                instante.add(Calendar.DAY_OF_MONTH, 1);
             }
-        ));        
-        highlightDay();        
+            jTable1.setModel(new javax.swing.table.DefaultTableModel(
+
+                hhDao.getBySemana(persona.getId(),instante.getTime())
+                ,
+                new String [] {
+                    "Lunes "+dias[0],
+                    "Martes "+dias[1],
+                    "Miércoles "+dias[2],
+                    "Jueves "+dias[3],
+                    "Viernes "+dias[4]
+                }
+            ));        
+            highlightDay();     
+            }
+        });           
     }
     
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed

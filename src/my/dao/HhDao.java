@@ -130,7 +130,8 @@ public class HhDao {
     }    
     
     public <T> Object[][] getBySemana(Integer idPersona, final Date fecha) {
-      //final Session session = sessionFactory.getCurrentSession();            
+      //final Session session = sessionFactory.getCurrentSession();     
+      System.out.println("fecha="+fecha);
       Calendar c1 = Calendar.getInstance();
       Calendar c2 = Calendar.getInstance();
       c1.setTime(fecha);
@@ -149,9 +150,11 @@ public class HhDao {
                     
       Object[][] matrizHh = new Object[29][5];
       
-      Calendar dia= Calendar.getInstance();
+      Calendar dia= c1;//Calendar.getInstance();      
       
-      dia.set(Calendar.DAY_OF_WEEK,2);
+      dia.add(Calendar.DAY_OF_WEEK,1);
+      
+      //dia.set(Calendar.DAY_OF_WEEK,2);      
       
       Calendar hora= Calendar.getInstance();
 
@@ -173,8 +176,8 @@ public class HhDao {
             int indice;            
             //System.out.println("sdfDia.format(hh.getDia())="+sdfDia.format(hh.getDia()));            
             //System.out.println("sdfHora.format(hora.getTime())="+sdfHora.format(hh.getHora()));
-            if((indice=result.indexOf(hh))!=-1)                
-                matrizHh[j][i]=result.get(indice);                                
+            if((indice=result.indexOf(hh))!=-1)
+                matrizHh[j][i]=result.get(indice);                                            
             else
                 matrizHh[j][i]=null;                   
             hora.add(Calendar.MINUTE, 30);
@@ -205,7 +208,7 @@ public class HhDao {
                     
       Object[][] matrizHh = new Object[29][c2.getActualMaximum(Calendar.DAY_OF_MONTH)];
       
-      Calendar dia= Calendar.getInstance();            
+      Calendar dia= c1; //Calendar.getInstance();            
       
       Calendar hora= Calendar.getInstance();
 

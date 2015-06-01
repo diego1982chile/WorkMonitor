@@ -47,7 +47,8 @@ public class PoiWriteExcelFile {
 
     public static int generarReporte() {
         
-        Calendar cal=Calendar.getInstance();
+        //Calendar cal=Calendar.getInstance();
+        Calendar cal=WorkMonitorUI.instante;
         
         try {
             FileOutputStream fileOut = new FileOutputStream("HH_"+instante.getDisplayName(Calendar.MONTH, Calendar.SHORT_FORMAT, Locale.getDefault()).toUpperCase()+"_"+
@@ -72,6 +73,22 @@ public class PoiWriteExcelFile {
             cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
             cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN); 
             cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+            
+            HSSFCellStyle schedStyle = workbook.createCellStyle();
+            schedStyle.setFillForegroundColor(HSSFColor.DARK_GREEN.index);
+            schedStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);            
+            HSSFFont font3 = workbook.createFont();
+            font3.setFontHeightInPoints((short) 11);
+            font3.setFontName("IMPACT");
+            font3.setItalic(true);
+            font3.setColor(HSSFColor.WHITE.index);
+            schedStyle.setFont(font3);
+            schedStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);  
+            schedStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+            schedStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+            schedStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+            schedStyle.setBorderTop(HSSFCellStyle.BORDER_THIN); 
+            schedStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
             
             HSSFCellStyle workdayStyle = workbook.createCellStyle();            
             //workdayStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);                        
@@ -100,7 +117,8 @@ public class PoiWriteExcelFile {
             weekendStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
             
             // index from 0,0... cell A1 is cell(0,0)
-            HSSFRow row1 = worksheet.createRow((short) 0);            
+            HSSFRow row1 = worksheet.createRow((short) 0);    
+            row1.setHeight((short)500);
 
             System.out.println(
             "cal.get(Calendar.YEAR)="+

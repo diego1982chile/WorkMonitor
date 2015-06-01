@@ -39,9 +39,10 @@ public class Clock {
                 
                 int hora=instante.get(Calendar.HOUR_OF_DAY);
                 int minuto=instante.get(Calendar.MINUTE);
+                int segundo=instante.get(Calendar.SECOND);
 
                 if(Arrays.asList(9,10,11,12,13,14,15,16,17,18,19,20,21,22,23).contains(hora)){
-                    if(minuto==30 || minuto==0)
+                    if(Arrays.asList(0,30).contains(minuto) && segundo==0)
                         WorkMonitorUI.refreshTable();
                 }
             }

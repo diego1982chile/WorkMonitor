@@ -26,7 +26,9 @@ public class LoginUI extends javax.swing.JDialog {
      */
     public LoginUI(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        JdbcDerbyConnection.connect();
         initComponents();
+        setTitle("WorkMonitor");
     }
 
     /**
@@ -55,6 +57,7 @@ public class LoginUI extends javax.swing.JDialog {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("   Login");
+        jLabel1.setToolTipText("");
         jLabel1.setOpaque(true);
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
