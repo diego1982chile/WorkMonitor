@@ -6,8 +6,12 @@
 package my.workmonitor;
 
 import java.awt.Cursor;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import my.dao.PersonaDao;
 import my.entity.Persona;
@@ -26,7 +30,15 @@ public class LoginUI extends javax.swing.JDialog {
      */
     public LoginUI(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        JdbcDerbyConnection.connect();
+        try {
+            JdbcDerbyConnection.connect();            
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(LoginUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(LoginUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(LoginUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
         initComponents();
         setTitle("WorkMonitor");
     }
@@ -179,7 +191,14 @@ public class LoginUI extends javax.swing.JDialog {
         }
         if(personas.size()==1){
             WorkMonitorUI workMonitorUI=new WorkMonitorUI(personas.get(0).getId());
-            workMonitorUI.setVisible(true);         
+            this.setEnabled(false);            
+            workMonitorUI.setVisible(true);            
+            workMonitorUI.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    setEnabled(true);
+                    requestFocus();
+                }
+            });
             //this.setEnabled(false);
         }
     }//GEN-LAST:event_jButton1ActionPerformed

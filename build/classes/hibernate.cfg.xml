@@ -4,8 +4,10 @@
   <session-factory>
     <property name="hibernate.current_session_context_class">thread</property>
     <property name="hibernate.dialect">org.hibernate.dialect.DerbyDialect</property>
-    <property name="hibernate.connection.driver_class">org.apache.derby.jdbc.ClientDriver</property>
-    <property name="hibernate.connection.url">jdbc:derby://localhost:1527/Trabajo</property>
+    <!--property name="hibernate.connection.driver_class">org.apache.derby.jdbc.ClientDriver</property-->
+    <property name="hibernate.connection.driver_class">org.apache.derby.jdbc.EmbeddedDriver</property>
+    <!--property name="hibernate.connection.url">jdbc:derby://localhost:1527/Trabajo</property-->
+    <property name="hibernate.connection.url">jdbc:derby:trabajo</property>
     <property name="hibernate.connection.username">sigges</property>
     <property name="hibernate.connection.password">sigges</property>
     <property name="hibernate.default_schema">APP</property>    

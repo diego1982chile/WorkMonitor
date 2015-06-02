@@ -7,12 +7,14 @@ package my.workmonitor;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Label;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import my.entity.Hh;
@@ -89,6 +91,8 @@ public Component getTableCellRendererComponent(JTable table, Object obj,
     else 
         cell.setBackground(Color.decode("#FFFACD"));                    
     //cell.setBackground(Color.YELLOW);
+    
+    this.setHorizontalAlignment(JLabel.CENTER);
 
     return cell;
     }
