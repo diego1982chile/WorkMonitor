@@ -27,7 +27,6 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,89,0,0,3,-126"/>
   </AuxValues>
 
   <Layout>
@@ -211,7 +210,7 @@
               <Font name="Tahoma" size="10" style="0"/>
             </Property>
             <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="new javax.swing.AbstractListModel() {&#xa;    List&lt;TipoTarea&gt; tiposTarea=tipoTareaDao.getByPersona(persona.getId());&#xa;    public int getSize() { return tiposTarea.size(); }&#xa;    public Object getElementAt(int i) { return tiposTarea.get(i); }    &#xa;}" type="code"/>
+              <Connection code="new javax.swing.AbstractListModel() {&#xa;    List&lt;TipoTarea&gt; tiposTarea=tipoTareaDao.getByPersona(persona.getId());&#xa;    public int getSize() { return tiposTarea.size(); }&#xa;    public Object getElementAt(int i) { return tiposTarea.get(i); }&#xa;}" type="code"/>
             </Property>
           </Properties>
           <Events>
@@ -219,7 +218,8 @@
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JList()"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="TipoTareaDao tipoTareaDao= new TipoTareaDao();"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="final TipoTareaDao tipoTareaDao= new TipoTareaDao();"/>
+            <AuxValue name="JavaCodeGenerator_ListenersCodePost" type="java.lang.String" value="jList1.addMouseListener(new MouseAdapter() {&#xa;    public void mousePressed(MouseEvent me) {        &#xa;        if (me.getClickCount() == 2) {      &#xa;            if(jList1.getModel().getSize()==0)&#xa;                return;&#xa;            TipoUI tipoUI=new TipoUI(null, true, (TipoTarea)jList1.getSelectedValue());&#xa;            tipoUI.setVisible(true); &#xa;        }&#xa;    }&#xa;});"/>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
           </AuxValues>
         </Component>
@@ -275,7 +275,8 @@
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JList()"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="TareaDao tareaDao= new TareaDao();"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jList3.addMouseListener(new MouseAdapter() {&#xa;    public void mousePressed(MouseEvent me) {        &#xa;        if (me.getClickCount() == 2) {  &#xa;            if(jList3.getModel().getSize()==0)&#xa;                return;&#xa;            TareaUI tareaUI=new TareaUI(null, true, (Tarea)jList3.getSelectedValue());&#xa;            tareaUI.setVisible(true); &#xa;        }&#xa;    }&#xa;});"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="final TareaDao tareaDao= new TareaDao();"/>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
           </AuxValues>
         </Component>
@@ -316,7 +317,7 @@
             <Property name="autoscrolls" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="false" type="code"/>
             </Property>
-            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor" preCode="jScrollPane4 = new JScrollPane(jTable1);">
               <TableColumnModel selectionModel="0">
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                   <Title/>
@@ -364,7 +365,7 @@
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JTable()"/>
-            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="for(int i=0;i&lt;jTable1.getColumnModel().getColumnCount();++i){&#xa;    jTable1.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);&#xa;    ((DefaultTableCellRenderer)jTable1.getTableHeader().getDefaultRenderer())&#xa;                .setHorizontalAlignment(JLabel.CENTER);&#xa;}&#xa;&#xa;jTable1.addMouseListener(new MouseAdapter() {&#xa;    public void mousePressed(MouseEvent me) {        &#xa;        if (me.getClickCount() == 2) {                                   &#xa;            Object o=jTable1.getModel().getValueAt(jTable1.getSelectedRow(), jTable1.getSelectedColumn());            &#xa;            Hh hh=new Hh();&#xa;            boolean nueva=true;&#xa;            if(o!=null){&#xa;                hh=(Hh)o;&#xa;                nueva=false;&#xa;            }&#xa;            else{&#xa;                Calendar cal= Calendar.getInstance();                &#xa;                int anyo=Integer.valueOf(jComboBox2.getSelectedItem().toString());&#xa;                int mes=jComboBox1.getSelectedIndex();                &#xa;                int dia=Integer.valueOf(jTable1.getColumnModel().getColumn(1).getHeaderValue().toString().split(&quot; &quot;)[1]);&#xa;                //String hora=jTable2.getValueAt(jTable1.getSelectedRow(), 0).toString().split(&quot; - &quot;)[0])+&quot;:00&quot;;&#xa;                System.out.println(&quot;anyo=&quot;+anyo);&#xa;                System.out.println(&quot;mes=&quot;+mes);&#xa;                System.out.println(&quot;dia=&quot;+dia);&#xa;                //System.out.println(&quot;hora=&quot;+hora);&#xa;                cal.set(Calendar.YEAR, anyo);&#xa;                cal.set(Calendar.MONTH, mes);&#xa;                cal.set(Calendar.DAY_OF_MONTH, dia);                &#xa;                //cal.set(Calendar.HOUR, hora);&#xa;                //hh.setDia(dia);&#xa;                //hh.setHora(hora);&#xa;            }&#xa;            HhUI hhUI=new HhUI(null, true);&#xa;            hhUI.setVisible(true); &#xa;        }&#xa;    }&#xa;});"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="for(int i=0;i&lt;jTable1.getColumnModel().getColumnCount();++i){&#xa;    jTable1.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);&#xa;    ((DefaultTableCellRenderer)jTable1.getTableHeader().getDefaultRenderer())&#xa;                .setHorizontalAlignment(JLabel.CENTER);&#xa;}&#xa;&#xa;jTable1.addMouseListener(new MouseAdapter() {&#xa;    public void mousePressed(MouseEvent me) {        &#xa;        if (me.getClickCount() == 2) {                                   &#xa;            Object o=jTable1.getModel().getValueAt(jTable1.getSelectedRow(), jTable1.getSelectedColumn());            &#xa;            Hh hh=new Hh();&#xa;            boolean nueva=true;&#xa;            HhUI hhUI;&#xa;            if(o!=null){&#xa;                hh=(Hh)o;&#xa;                nueva=false;&#xa;                hhUI=new HhUI(null, true, hh, false);&#xa;            }&#xa;            else{&#xa;                Calendar cal= Calendar.getInstance();                &#xa;                int anyo=Integer.valueOf(jComboBox2.getSelectedItem().toString());&#xa;                int mes=jComboBox1.getSelectedIndex();                &#xa;                int dia=Integer.valueOf(jTable1.getColumnModel().getColumn(jTable1.getSelectedColumn()).getHeaderValue().toString().split(&quot; &quot;)[1]);&#xa;                int hora=(int)jTable1.getSelectedRow()/2+9;&#xa;                int minuto=jTable1.getSelectedRow()%2*30;     &#xa;                int segundo=0;&#xa;                SimpleDateFormat sdf=new SimpleDateFormat(&quot;HH:mm:ss&quot;);&#xa;                cal.set(Calendar.YEAR, anyo);&#xa;                cal.set(Calendar.MONTH, mes);&#xa;                cal.set(Calendar.DAY_OF_MONTH, dia);                &#xa;                cal.set(Calendar.HOUR_OF_DAY, hora);&#xa;                cal.set(Calendar.MINUTE, minuto);   &#xa;                cal.set(Calendar.SECOND, segundo);&#xa;                hh.setDia(cal.getTime());&#xa;                hh.setHora(Time.valueOf(sdf.format(cal.getTime())));&#xa;                hh.setIdPersona(persona.getId());&#xa;                hhUI=new HhUI(null, true, hh, true);&#xa;            }            &#xa;            hhUI.setVisible(true); &#xa;        }&#xa;    }&#xa;});&#xa;        &#xa;jTable1.setPreferredScrollableViewportSize(jTable1.getPreferredSize());"/>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
           </AuxValues>
         </Component>
@@ -418,6 +419,9 @@
           <Connection code="new javax.swing.DefaultComboBoxModel(anyos)" type="code"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox2ActionPerformed"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JComboBox()"/>
         <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="int anyo=instante.get(Calendar.YEAR);&#xa;String[] anyos=new String[10];&#xa;for(int i=0;i&lt;10;++i)&#xa;    anyos[i]=String.valueOf(anyo-i);"/>

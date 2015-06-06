@@ -72,6 +72,13 @@ public class Tarea  implements java.io.Serializable {
     public String toString() {
         return this.getNombre().trim().toUpperCase();
     }
+    
+    @Override
+    public boolean equals(Object o)
+    {        
+        Tarea tarea=(Tarea)o;      
+        return (this.getNombre().trim().toUpperCase().equals(tarea.getNombre().trim().toUpperCase()));        
+    }
 }
 
 

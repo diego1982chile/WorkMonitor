@@ -5,8 +5,11 @@
  */
 package my.workmonitor;
 
+import java.awt.event.KeyEvent;
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import my.dao.HibernateUtil;
 import my.dao.PersonaDao;
@@ -29,6 +32,13 @@ public class RegisterUI extends javax.swing.JDialog {
     public RegisterUI(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                System.out.println("aaaaaaaa");
+                if(evt.getKeyCode()==KeyEvent.VK_ENTER)            
+                    jButton1.doClick();
+            }
+        });        
     }
 
     /**
@@ -61,9 +71,27 @@ public class RegisterUI extends javax.swing.JDialog {
 
         jLabel2.setText("Nombre");
 
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextField1KeyPressed(evt);
+            }
+        });
+
         jLabel3.setText("Apellido");
 
+        jTextField2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextField2KeyPressed(evt);
+            }
+        });
+
         jLabel4.setText("Usuario");
+
+        jTextField3.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextField3KeyPressed(evt);
+            }
+        });
 
         jLabel5.setText("Password");
 
@@ -72,11 +100,21 @@ public class RegisterUI extends javax.swing.JDialog {
                 jPasswordField4ActionPerformed(evt);
             }
         });
+        jPasswordField4.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jPasswordField4KeyPressed(evt);
+            }
+        });
 
         jButton1.setText("Crear Cuenta");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
+            }
+        });
+        jButton1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jButton1KeyPressed(evt);
             }
         });
 
@@ -89,19 +127,26 @@ public class RegisterUI extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(61, 61, 61)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jPasswordField4, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(87, 87, 87))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(77, 77, 77))
+                            .addComponent(jPasswordField4)
+                            .addComponent(jTextField3)
+                            .addComponent(jTextField2)
+                            .addComponent(jTextField1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(86, 86, 86))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(79, 79, 79)
-                        .addComponent(jButton1)))
-                .addContainerGap(70, Short.MAX_VALUE))
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(8, 8, 8)))
+                .addGap(70, 70, 70))
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -182,20 +227,52 @@ public class RegisterUI extends javax.swing.JDialog {
             return;
         }                                
                  
-        if(personaDao.save(persona)==(Serializable)0){
-            JOptionPane.showMessageDialog(null, "Error al ingresar usuario. No se ha podido ingresar");   
-            jTextField1.setText(""); 
-            jTextField2.setText("");
-            jTextField3.setText("");
-            jPasswordField4.setText("");  
-            return;
-        }        
+        try {
+            if(personaDao.save(persona)==(Serializable)0){
+                JOptionPane.showMessageDialog(null, "Error al ingresar usuario. No se ha podido ingresar");
+                jTextField1.setText("");
+                jTextField2.setText("");
+                jTextField3.setText("");
+                jPasswordField4.setText("");
+                return;        
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(RegisterUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         JOptionPane.showMessageDialog(null, "El usuario se ha ingresado correctamente");   
         this.dispose();
         return;           
         
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton1KeyPressed
+        // TODO add your handling code here:       
+    }//GEN-LAST:event_jButton1KeyPressed
+
+    private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyPressed
+        // TODO add your handling code here:
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER)            
+            jButton1.doClick();  
+    }//GEN-LAST:event_jTextField1KeyPressed
+
+    private void jTextField2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField2KeyPressed
+        // TODO add your handling code here:
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER)            
+            jButton1.doClick();          
+    }//GEN-LAST:event_jTextField2KeyPressed
+
+    private void jTextField3KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField3KeyPressed
+        // TODO add your handling code here:
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER)            
+            jButton1.doClick();  
+    }//GEN-LAST:event_jTextField3KeyPressed
+
+    private void jPasswordField4KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPasswordField4KeyPressed
+        // TODO add your handling code here:
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER)            
+            jButton1.doClick();  
+    }//GEN-LAST:event_jPasswordField4KeyPressed
 
     /**
      * @param args the command line arguments

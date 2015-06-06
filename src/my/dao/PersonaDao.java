@@ -17,7 +17,7 @@ import org.hibernate.context.internal.ThreadLocalSessionContext;
 
 public class PersonaDao{        
 
-    public <T> Serializable save(final T o){
+    public <T> Serializable save(final T o) throws Exception{
       //return (T) sessionFactory.getCurrentSession().save(o);
         final Session session = HibernateUtil.sessionFactory.openSession();
         Transaction tx = null;

@@ -61,14 +61,10 @@ public class Actividad  implements java.io.Serializable {
         return this.getNombre().trim().toUpperCase();
     }
 
-        @Override
+    @Override
     public boolean equals(Object o)
     {        
-        Actividad actividad=(Actividad)o;
-        //System.out.println("actividad.getNombre().trim().toUpperCase()="+actividad.getNombre().trim().toUpperCase());
-        //System.out.println("this.getNombre().trim().toUpperCase()="+this.getNombre().trim().toUpperCase());
-        //System.out.println("this.getNombre().trim().toUpperCase().equals(actividad.getNombre().trim().toUpperCase())="+
-        //this.getNombre().trim().toUpperCase().equals(actividad.getNombre().trim().toUpperCase()));        
+        Actividad actividad=(Actividad)o;      
         return (this.getNombre().trim().toUpperCase().equals(actividad.getNombre().trim().toUpperCase()));        
     }
 }

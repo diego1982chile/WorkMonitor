@@ -26,7 +26,7 @@ import org.hibernate.mapping.Set;
  */
 public class HhDao {
     
-    public <T> Serializable save(final T o){
+    public <T> Serializable save(final T o) throws Exception{
        //return (T) sessionFactory.getCurrentSession().save(o);
         final Session session = HibernateUtil.sessionFactory.openSession();
         Transaction tx = null;
@@ -46,7 +46,7 @@ public class HhDao {
         return identity;
     }
     
-    public <T> void update(final T o){
+    public <T> void update(final T o) throws Exception{
        //return (T) sessionFactory.getCurrentSession().save(o);
         final Session session = HibernateUtil.sessionFactory.openSession();
         Transaction tx = null;
@@ -68,9 +68,25 @@ public class HhDao {
         }        
     }
 
-    public void delete(final Object object){
+    public void delete(final Object object) throws Exception{
       //sessionFactory.getCurrentSession().delete(object);
-      HibernateUtil.sessionFactory.openSession().delete(object);
+        final Session session = HibernateUtil.sessionFactory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();                                                   
+            //session.refresh(o);                          
+            //System.out.println("Hh={"+hh.getId()+","+hh.getDia()+","+hh.getHora()+","+hh.getIdPersona()+","+hh.getIdTarea()+","+hh.getIdActividad()+"}");                            
+            session.flush();                
+            session.delete(object);                                                                                    
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            throw e;
+        }
+        finally {
+            session.close();
+        }   
     }
 
     /***/
@@ -80,7 +96,7 @@ public class HhDao {
     }
 
     /***/
-    public <T> void merge(final T o)   {
+    public <T> void merge(final T o) throws Exception   {
       //return (T) sessionFactory.getCurrentSession().merge(o);
       //return (T) HibernateUtil.sessionFactory.openSession().merge(o);
         final Session session = HibernateUtil.sessionFactory.openSession();        
@@ -100,7 +116,7 @@ public class HhDao {
     }
 
     /***/
-    public <T> void saveOrUpdate(final T o){
+    public <T> void saveOrUpdate(final T o) throws Exception{
       //sessionFactory.getCurrentSession().saveOrUpdate(o);     
         final Session session = HibernateUtil.sessionFactory.openSession();
         Transaction tx = null;

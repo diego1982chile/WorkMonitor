@@ -7,6 +7,8 @@ package my.workmonitor;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import my.dao.PersonaDao;
 import my.dao.TipoTareaDao;
@@ -17,6 +19,9 @@ import my.entity.TipoTarea;
  * @author Diego
  */
 public class TipoUI extends javax.swing.JDialog {
+    
+    boolean nuevo=true;
+    TipoTarea tipoTarea;
 
     /**
      * Creates new form TipoUI
@@ -26,6 +31,17 @@ public class TipoUI extends javax.swing.JDialog {
     public TipoUI(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+    }
+    
+    public TipoUI(java.awt.Frame parent, boolean modal, TipoTarea tipoTarea) {
+        super(parent, modal);
+        initComponents();
+        jLabel1.setText(" Tipo Tarea Actual");
+        jButton1.setText("Modificar");
+        jTextField1.setText(tipoTarea.getNombre().trim().toUpperCase());
+        jTextArea1.setText(tipoTarea.getDescripcion().trim().toUpperCase());
+        this.tipoTarea=tipoTarea;
+        nuevo=false;
     }
 
     /**
@@ -105,7 +121,7 @@ public class TipoUI extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here:        
         String nombre=jTextField1.getText().toString();
         String descripcion=jTextArea1.getText().toString();
 
@@ -116,23 +132,40 @@ public class TipoUI extends javax.swing.JDialog {
         if(descripcion.equals("")){
             JOptionPane.showMessageDialog(null, "Debe ingresar una descripción para este tipo");
             return;
-        }
+        }             
         
-        TipoTarea tipoTarea=new TipoTarea();        
-        tipoTarea.setIdPersona(WorkMonitorUI.persona.getId());
-        tipoTarea.setNombre(nombre.trim().toUpperCase());
-        tipoTarea.setDescripcion(descripcion.trim().toUpperCase());        
-
-        List<TipoTarea> tiposTarea=tipoTareaDao.getByPersonaNombre(WorkMonitorUI.persona.getId(),nombre);
-
-        if(!tiposTarea.isEmpty()){
-            JOptionPane.showMessageDialog(null, "Ya existe un tipo de tarea con este nombre para este usuario");            
-            return;
+        if(!nuevo){
+            tipoTarea.setNombre(nombre.trim().toUpperCase());
+            tipoTarea.setDescripcion(descripcion.trim().toUpperCase());  
+            try {
+                tipoTareaDao.update(this.tipoTarea);
+            } catch (Exception ex) {
+                Logger.getLogger(TipoUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            JOptionPane.showMessageDialog(null, "El tipo de tarea se ha modificado correctamente");
         }
+        else{
+            TipoTarea tipoTarea=new TipoTarea();        
+            tipoTarea.setIdPersona(WorkMonitorUI.persona.getId());
+            tipoTarea.setNombre(nombre.trim().toUpperCase());
+            tipoTarea.setDescripcion(descripcion.trim().toUpperCase());   
 
-        if(tipoTareaDao.save(tipoTarea)==(Serializable)0){
-            JOptionPane.showMessageDialog(null, "Error al ingresar tipo de tarea. No se ha podido ingresar");            
-            return;
+            List<TipoTarea> tiposTarea=tipoTareaDao.getByPersonaNombre(WorkMonitorUI.persona.getId(),nombre);
+
+            if(!tiposTarea.isEmpty()){
+                JOptionPane.showMessageDialog(null, "Ya existe un tipo de tarea con este nombre para este usuario");            
+                return;
+            }
+
+            try {
+                if(tipoTareaDao.save(tipoTarea)==(Serializable)0){
+                    JOptionPane.showMessageDialog(null, "Error al ingresar tipo de tarea. No se ha podido ingresar");
+                    return;
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(TipoUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            JOptionPane.showMessageDialog(null, "El tipo de tarea se ha ingresado correctamente");
         }
 
         WorkMonitorUI.jList1.setModel(new javax.swing.AbstractListModel() {
@@ -140,8 +173,7 @@ public class TipoUI extends javax.swing.JDialog {
             public int getSize() { return tiposTarea.size(); }    
             public Object getElementAt(int i) { return tiposTarea.get(i); }
         });
-        
-        JOptionPane.showMessageDialog(null, "El tipo de tarea se ha ingresado correctamente");
+                
         this.dispose();
         return;
 

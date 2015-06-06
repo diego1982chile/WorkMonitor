@@ -1,9 +1,10 @@
 package security;
 
-import java.util.Base64;
+//import java.util.Base64;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * Created by android-developer on 12-10-2014.
@@ -37,8 +38,8 @@ public class CryptoUtil {
             md.update(passBytes);
 
             byte[] hash = md.digest();
-
-            passwordHash=Base64.getEncoder().encodeToString(hash);
+            
+            passwordHash=Base64.encodeBase64String(hash);
                 //passwordHash =  encodeBase64(hash);
 
         }

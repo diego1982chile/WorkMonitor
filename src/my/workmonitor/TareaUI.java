@@ -7,6 +7,8 @@ package my.workmonitor;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import my.dao.TareaDao;
 import my.dao.TipoTareaDao;
@@ -20,6 +22,8 @@ import my.entity.TipoTarea;
  */
 public class TareaUI extends javax.swing.JDialog {
 
+    boolean nuevo=true;
+    Tarea tarea;
     /**
      * Creates new form TareaUI
      */
@@ -38,6 +42,18 @@ public class TareaUI extends javax.swing.JDialog {
         tipoTarea=tipoTareaDao.get(TipoTarea.class ,(Integer)idTipoTarea); 
         jTextField2.setText(tipoTarea.getNombre().toString());
     }
+    
+    public TareaUI(java.awt.Frame parent, boolean modal, Tarea tarea) {
+        super(parent, modal);
+        initComponents();
+        jLabel1.setText(" Tarea Actual");
+        jButton1.setText("Modificar");
+        jTextField2.setText(tarea.getTipoTarea().getNombre().trim().toUpperCase());
+        jTextField1.setText(tarea.getNombre().trim().toUpperCase());
+        jTextArea1.setText(tarea.getComentario().trim().toUpperCase());
+        this.tarea=tarea;
+        nuevo=false;
+    }    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -148,33 +164,51 @@ public class TareaUI extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Debe ingresar una descripción para este tipo");
             return;
         }
-
-        Tarea tarea=new Tarea();
-        tarea.setNombre(nombre.trim().toUpperCase());
-        tarea.setComentario(descripcion.trim().toUpperCase());
-        tarea.setTipoTarea(tipoTarea);
-        tarea.setIdTipoTarea(tipoTarea.getId());
-
-        List<Tarea> tareas=tareaDao.getByNombre(nombre);
-
-        if(!tareas.isEmpty()){
-            JOptionPane.showMessageDialog(null, "Ya existe una tarea con este nombre");
-            return;
-        }
-
-        if(tareaDao.save(tarea)==(Serializable)0){
-            JOptionPane.showMessageDialog(null, "Error al ingresar tarea. No se ha podido ingresar");
-            return;
-        }
         
+        if(!nuevo){
+            //tarea.setTipoTarea(this.tarea.getTipoTarea());
+            //tarea.setIdTipoTarea(this.tarea.getTipoTarea().getId());
+            this.tarea.setNombre(nombre.trim().toUpperCase());
+            this.tarea.setComentario(descripcion.trim().toUpperCase());  
+            try {
+                tareaDao.update(this.tarea);
+            } catch (Exception ex) {
+                Logger.getLogger(TareaUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            JOptionPane.showMessageDialog(null, "La tarea se ha modificado correctamente");
+            WorkMonitorUI.refreshTable();
+            this.dispose();
+        }
+        else{
+            Tarea tarea=new Tarea();
+            tarea.setNombre(nombre.trim().toUpperCase());
+            tarea.setComentario(descripcion.trim().toUpperCase());
+            tarea.setTipoTarea(tipoTarea);
+            tarea.setIdTipoTarea(tipoTarea.getId());
+            List<Tarea> tareas=tareaDao.getByNombre(nombre);
+
+            if(!tareas.isEmpty()){
+                JOptionPane.showMessageDialog(null, "Ya existe una tarea con este nombre");
+                return;
+            }
+
+            try {
+                if(tareaDao.save(tarea)==(Serializable)0){
+                    JOptionPane.showMessageDialog(null, "Error al ingresar tarea. No se ha podido ingresar");
+                    return;
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(TareaUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            JOptionPane.showMessageDialog(null, "La tarea se ha ingresado correctamente");
+            this.dispose();
+        }    
         WorkMonitorUI.jList3.setModel(new javax.swing.AbstractListModel() {
             List<Tarea> tareas=tareaDao.getByTipoTarea(tipoTarea.getNombre());
             public int getSize() { return tareas.size(); }
             public Object getElementAt(int i) { return tareas.get(i); }
-        });
-
-        JOptionPane.showMessageDialog(null, "La tarea se ha ingresado correctamente");
-        this.dispose();
+        });        
         return;
     }//GEN-LAST:event_jButton1ActionPerformed
 

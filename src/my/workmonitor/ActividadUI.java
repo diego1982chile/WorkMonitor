@@ -25,6 +25,8 @@ import my.entity.TipoTarea;
  */
 public class ActividadUI extends javax.swing.JDialog {
 
+    boolean nuevo=true;
+    Actividad actividad;
     /**
      * Creates new form ActividadUI
      */
@@ -35,6 +37,16 @@ public class ActividadUI extends javax.swing.JDialog {
         initComponents();
     }
    
+    public ActividadUI(java.awt.Frame parent, boolean modal, Actividad actividad) {
+        super(parent, modal);
+        initComponents();
+        jLabel1.setText(" Actividad Actual");
+        jButton1.setText("Modificar");       
+        jTextField1.setText(actividad.getNombre().trim().toUpperCase());
+        jTextArea1.setText(actividad.getDescripcion().trim().toUpperCase());
+        this.actividad=actividad;
+        nuevo=false;
+    } 
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -138,32 +150,46 @@ public class ActividadUI extends javax.swing.JDialog {
         Actividad actividad=new Actividad();
         actividad.setIdPersona(WorkMonitorUI.persona.getId());
         actividad.setNombre(nombre.trim().toUpperCase());
-        actividad.setDescripcion(descripcion.trim().toUpperCase());        
-
-        List<Actividad> actividades=actividadDao.getByPersonaNombre(WorkMonitorUI.persona.getId(),nombre);
-
-        if(!actividades.isEmpty()){
-            JOptionPane.showMessageDialog(null, "Ya existe una actividad con este nombre para este usuario");
-            return;
-        }        
-
-        try {
-            if(actividadDao.save(actividad)==(Serializable)0){
-                JOptionPane.showMessageDialog(null, "Error al ingresar actividad. No se ha podido ingresar");
-                return;
+        actividad.setDescripcion(descripcion.trim().toUpperCase());   
+        
+        if(!nuevo){
+            this.actividad.setNombre(nombre.trim().toUpperCase());
+            this.actividad.setDescripcion(descripcion.trim().toUpperCase());  
+            try {
+                actividadDao.update(this.actividad);
+            } catch (Exception ex) {
+                Logger.getLogger(ActividadUI.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (Exception ex) {
-            Logger.getLogger(ActividadUI.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "La actividad se ha modificado correctamente");
+            this.dispose();
         }
+        else{
+            List<Actividad> actividades=actividadDao.getByPersonaNombre(WorkMonitorUI.persona.getId(),nombre);
 
+            if(!actividades.isEmpty()){
+                JOptionPane.showMessageDialog(null, "Ya existe una actividad con este nombre para este usuario");
+                return;
+            }        
+
+            try {
+                if(actividadDao.save(actividad)==(Serializable)0){
+                    JOptionPane.showMessageDialog(null, "Error al ingresar actividad. No se ha podido ingresar");
+                    return;
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(ActividadUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            JOptionPane.showMessageDialog(null, "La actividad se ha ingresado correctamente");
+            this.dispose();
+        }
+        
         TareaActividadUI.jList3.setModel(new javax.swing.AbstractListModel() {            
             List<Actividad> actividades=actividadDao.getByPersona(WorkMonitorUI.persona.getId());
             public int getSize() { return actividades.size(); }
             public Object getElementAt(int i) { return actividades.get(i); }
         });
         
-        JOptionPane.showMessageDialog(null, "La actividad se ha ingresado correctamente");
-        this.dispose();
+
         return;
     }//GEN-LAST:event_jButton1ActionPerformed
 

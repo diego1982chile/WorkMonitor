@@ -75,7 +75,7 @@ public class PoiWriteExcelFile {
             cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
             
             HSSFCellStyle schedStyle = workbook.createCellStyle();
-            schedStyle.setFillForegroundColor(HSSFColor.DARK_GREEN.index);
+            schedStyle.setFillForegroundColor(HSSFColor.GREY_50_PERCENT.index);
             schedStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);            
             HSSFFont font3 = workbook.createFont();
             font3.setFontHeightInPoints((short) 11);
@@ -155,7 +155,7 @@ public class PoiWriteExcelFile {
                 hora.add(Calendar.MINUTE, 30);
                 String horaFin=sdf.format(hora.getTime());
                 cellXn.setCellValue(horaIni+" - "+horaFin);
-                cellXn.setCellStyle(cellStyle); 
+                cellXn.setCellStyle(schedStyle); 
             }
             
             cal.add(Calendar.DAY_OF_MONTH, -cal.get(Calendar.DAY_OF_MONTH)+1);            

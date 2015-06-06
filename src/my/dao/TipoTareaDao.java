@@ -23,7 +23,7 @@ import org.hibernate.context.internal.ThreadLocalSessionContext;
  */
 public class TipoTareaDao {
     
-    public <T> Serializable save(final T o){
+    public <T> Serializable save(final T o) throws Exception{
       //return (T) sessionFactory.getCurrentSession().save(o);
         final Session session = HibernateUtil.sessionFactory.openSession();
         Transaction tx = null;
@@ -44,7 +44,7 @@ public class TipoTareaDao {
         return identity;
     }
 
-    public void delete(final Object o){
+    public void delete(final Object o) throws Exception{
       //sessionFactory.getCurrentSession().delete(object);
         //HibernateUtil.sessionFactory.openSession().delete(object);
         final Session session = HibernateUtil.sessionFactory.openSession();
@@ -106,6 +106,28 @@ public class TipoTareaDao {
             session.close();
         }        
     }
+    
+    public <T> void update(final T o) throws Exception{
+       //return (T) sessionFactory.getCurrentSession().save(o);
+        final Session session = HibernateUtil.sessionFactory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();                                                   
+            //session.refresh(o);  
+            //Hh hh=(Hh)o;                    
+            //System.out.println("Hh={"+hh.getId()+","+hh.getDia()+","+hh.getHora()+","+hh.getIdPersona()+","+hh.getIdTarea()+","+hh.getIdActividad()+"}");                            
+            session.flush();                
+            session.update(o);                                                                                    
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            throw e;
+        }
+        finally {
+            session.close();
+        }        
+    }    
 
     /***/
     public <T> T get(final Class<T> type, final Integer id){
@@ -138,7 +160,7 @@ public class TipoTareaDao {
     public <T> List<T> getByPersona(final Integer idPersona) {
       //final Session session = sessionFactory.getCurrentSession();
       final Session session = HibernateUtil.sessionFactory.openSession();      
-      String sql = "from TipoTarea where id_persona = ?";
+      String sql = "from TipoTarea where id_persona = ? order by nombre";
       List result = session.createQuery(sql)
       .setInteger(0, idPersona)      
       .list();     
@@ -149,7 +171,7 @@ public class TipoTareaDao {
     public <T> List<T> getByNombre(final String nombre) {
       //final Session session = sessionFactory.getCurrentSession();
       final Session session = HibernateUtil.sessionFactory.openSession();      
-      String sql = "from TipoTarea t where upper(t.nombre) = upper(?)";
+      String sql = "from TipoTarea t where upper(t.nombre) = upper(?) order by nombre";
       List result = session.createQuery(sql)
       .setString(0, nombre)      
       .list();      
@@ -160,7 +182,7 @@ public class TipoTareaDao {
     public <T> List<T> getByPersonaNombre(final Integer idPersona, final String nombre) {
       //final Session session = sessionFactory.getCurrentSession();
       final Session session = HibernateUtil.sessionFactory.openSession();      
-      String sql = "from TipoTarea where id_persona = :idPersona and upper(nombre) = upper(:nombre)";
+      String sql = "from TipoTarea where id_persona = :idPersona and upper(nombre) = upper(:nombre) order by nombre";
       List result = session.createQuery(sql)
       .setInteger("idPersona", idPersona)      
       .setString("nombre", nombre)

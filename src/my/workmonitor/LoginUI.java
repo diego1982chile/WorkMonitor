@@ -6,6 +6,7 @@
 package my.workmonitor;
 
 import java.awt.Cursor;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
@@ -24,12 +25,14 @@ import security.PasswordHelper;
 public class LoginUI extends javax.swing.JDialog {
     
     private static PersonaDao personaDao= new PersonaDao();
+    private static WorkMonitorUI workMonitorUI=null;
 
     /**
      * Creates new form LoginUI
      */
     public LoginUI(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        
         try {
             JdbcDerbyConnection.connect();            
         } catch (ClassNotFoundException ex) {
@@ -39,7 +42,15 @@ public class LoginUI extends javax.swing.JDialog {
         } catch (IllegalAccessException ex) {
             Logger.getLogger(LoginUI.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
         initComponents();
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                System.out.println("aaaaaaaa");
+                if(evt.getKeyCode()==KeyEvent.VK_ENTER)            
+                    jButton1.doClick();
+            }
+        });
         setTitle("WorkMonitor");
     }
 
@@ -63,7 +74,14 @@ public class LoginUI extends javax.swing.JDialog {
         jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(258, 236));
+        setMinimumSize(new java.awt.Dimension(258, 236));
         setModalityType(null);
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         jLabel1.setBackground(new java.awt.Color(123, 153, 172));
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -75,13 +93,30 @@ public class LoginUI extends javax.swing.JDialog {
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel2.setText("Usuario");
 
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextField1KeyPressed(evt);
+            }
+        });
+
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel3.setText("Password");
+
+        jPasswordField2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jPasswordField2KeyPressed(evt);
+            }
+        });
 
         jButton1.setText("Ingresar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
+            }
+        });
+        jButton1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jButton1KeyPressed(evt);
             }
         });
 
@@ -110,14 +145,14 @@ public class LoginUI extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jButton1)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
                             .addComponent(jLabel4))
                         .addComponent(jPasswordField2, javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING)))
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addGap(28, 28, 28))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -190,7 +225,7 @@ public class LoginUI extends javax.swing.JDialog {
             return;            
         }
         if(personas.size()==1){
-            WorkMonitorUI workMonitorUI=new WorkMonitorUI(personas.get(0).getId());
+            workMonitorUI=new WorkMonitorUI(personas.get(0).getId());
             this.setEnabled(false);            
             workMonitorUI.setVisible(true);            
             workMonitorUI.addWindowListener(new WindowAdapter() {
@@ -202,6 +237,67 @@ public class LoginUI extends javax.swing.JDialog {
             //this.setEnabled(false);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton1KeyPressed
+        // TODO add your handling code here:
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER){
+            String usuario=jTextField1.getText().toString().trim();
+            String password=jPasswordField2.getText().toString().trim();                        
+            PasswordHelper passwordHelper=new PasswordHelper();
+
+            if(usuario.equals("")){
+                JOptionPane.showMessageDialog(null, "Debe ingresar su nombre de usuario");
+                return;
+            }
+            if(password.equals("")){
+                JOptionPane.showMessageDialog(null, "Debe ingresar su password");        
+                return;
+            }        
+
+            List<Persona> personas=personaDao.getByUsuarioPassword(usuario,passwordHelper.encriptarMD5base64(password));
+
+            if(personas.size()==0){
+                JOptionPane.showMessageDialog(null, "No existe el usuario o el password es incorrecto");
+                jTextField1.setText(""); 
+                jPasswordField2.setText("");            
+                return;
+            }
+            if(personas.size()>1){
+                JOptionPane.showMessageDialog(null, "Existe mas de un usuario con este usuario y este password");
+                jTextField1.setText(""); 
+                jPasswordField2.setText("");
+                return;            
+            }
+            if(personas.size()==1){
+                workMonitorUI=new WorkMonitorUI(personas.get(0).getId());
+                this.setEnabled(false);            
+                workMonitorUI.setVisible(true);            
+                workMonitorUI.addWindowListener(new WindowAdapter() {
+                    public void windowClosing(WindowEvent e) {
+                        setEnabled(true);
+                        requestFocus();
+                    }
+                });
+                //this.setEnabled(false);
+            }
+        }            
+    }//GEN-LAST:event_jButton1KeyPressed
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        // TODO add your handling code here:                
+    }//GEN-LAST:event_formKeyPressed
+
+    private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyPressed
+        // TODO add your handling code here:
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER)            
+            jButton1.doClick();
+    }//GEN-LAST:event_jTextField1KeyPressed
+
+    private void jPasswordField2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPasswordField2KeyPressed
+        // TODO add your handling code here:
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER)            
+            jButton1.doClick();        
+    }//GEN-LAST:event_jPasswordField2KeyPressed
 
     /**
      * @param args the command line arguments

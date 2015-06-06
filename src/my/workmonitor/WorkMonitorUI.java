@@ -10,6 +10,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
@@ -17,7 +19,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Serializable;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Dictionary;
@@ -26,12 +31,16 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -68,7 +77,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     private static TareaDao tareaDao= new TareaDao(); 
     private static ActividadDao actividadDao= new ActividadDao(); 
     private static HhDao hhDao= new HhDao(); 
-    private static Timer timer= new Timer();
+    private static final Timer timer= new Timer();
     private static Clock clock= new Clock();
     public static Calendar instante;    
     
@@ -97,16 +106,36 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         this.setTitle("HH_"+instante.getDisplayName(Calendar.MONTH, Calendar.SHORT_FORMAT, Locale.getDefault()).toUpperCase()+"_"+
                       persona.getNombre().toUpperCase().charAt(0)+"."+persona.getApellido().toUpperCase()+"_"+instante.get(Calendar.YEAR));
         jComboBox1.setSelectedIndex(instante.get(Calendar.MONTH));     
-        highlightDay();
+        highlightDay();        
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                timer.activo=false;
+            }
+        });        
         //jTable1.getColumn(jTable1.getColumnName(instante.get(Calendar.DAY_OF_WEEK))).setHeaderRenderer(new TableCellRenderer()        
-    }            
-    
-    public void mySetSize(){
-        this.setSize(new Dimension((int)(0.7*java.awt.Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
-                                   (int)(0.89*java.awt.Toolkit.getDefaultToolkit().getScreenSize().getHeight())));
+    }           
         
+    public void mySetSize(){        
+        double offset=0.895;
+        setSize(new Dimension((int)(0.7*java.awt.Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
+                              (int)(offset*java.awt.Toolkit.getDefaultToolkit().getScreenSize().getHeight())));
         setMinimumSize(new Dimension((int)(0.7*java.awt.Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
-                                   (int)(0.89*java.awt.Toolkit.getDefaultToolkit().getScreenSize().getHeight())));
+                                     (int)(offset*java.awt.Toolkit.getDefaultToolkit().getScreenSize().getHeight())));                                                
+        
+        jScrollPane5.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);        
+        jScrollPane4.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);        
+        /*
+        while(jScrollPane5.getVerticalScrollBar().isShowing() ){
+            setSize(new Dimension((int)(0.7*java.awt.Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
+                                  (int)(0.5*java.awt.Toolkit.getDefaultToolkit().getScreenSize().getHeight())));
+
+            setMinimumSize(new Dimension((int)(0.7*java.awt.Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
+                                         (int)(0.5*java.awt.Toolkit.getDefaultToolkit().getScreenSize().getHeight())));                            
+            offset=offset+0.05;
+        }
+        */
+        jTable2.setFillsViewportHeight(true);  
+        jTable1.setFillsViewportHeight(true); 
     }
 
     /**
@@ -157,7 +186,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(1, 1));
         setPreferredSize(new java.awt.Dimension(1, 1));
 
-        TipoTareaDao tipoTareaDao= new TipoTareaDao();
+        final TipoTareaDao tipoTareaDao= new TipoTareaDao();
         jList1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jList1.setModel(new javax.swing.AbstractListModel() {
             List<TipoTarea> tiposTarea=tipoTareaDao.getByPersona(persona.getId());
@@ -167,6 +196,16 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 jList1ValueChanged(evt);
+            }
+        });
+        jList1.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent me) {
+                if (me.getClickCount() == 2) {
+                    if(jList1.getModel().getSize()==0)
+                    return;
+                    TipoUI tipoUI=new TipoUI(null, true, (TipoTarea)jList1.getSelectedValue());
+                    tipoUI.setVisible(true);
+                }
             }
         });
         jScrollPane1.setViewportView(jList1);
@@ -183,12 +222,22 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1.setText("Tipos");
 
-        TareaDao tareaDao= new TareaDao();
+        final TareaDao tareaDao= new TareaDao();
         jList3.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jList3.setModel(new javax.swing.AbstractListModel() {
             List<Tarea> tareas=tareaDao.getByTipoTarea("");
             public int getSize() { return tareas.size(); }
             public Object getElementAt(int i) { return tareas.get(i).getNombre(); }
+        });
+        jList3.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent me) {
+                if (me.getClickCount() == 2) {
+                    if(jList3.getModel().getSize()==0)
+                    return;
+                    TareaUI tareaUI=new TareaUI(null, true, (Tarea)jList3.getSelectedValue());
+                    tareaUI.setVisible(true);
+                }
+            }
         });
         jScrollPane3.setViewportView(jList3);
 
@@ -254,60 +303,67 @@ public class WorkMonitorUI extends javax.swing.JFrame {
                     Object o=jTable1.getModel().getValueAt(jTable1.getSelectedRow(), jTable1.getSelectedColumn());
                     Hh hh=new Hh();
                     boolean nueva=true;
+                    HhUI hhUI;
                     if(o!=null){
                         hh=(Hh)o;
                         nueva=false;
+                        hhUI=new HhUI(null, true, hh, false);
                     }
                     else{
                         Calendar cal= Calendar.getInstance();
                         int anyo=Integer.valueOf(jComboBox2.getSelectedItem().toString());
                         int mes=jComboBox1.getSelectedIndex();
-                        int dia=Integer.valueOf(jTable1.getColumnModel().getColumn(1).getHeaderValue().toString().split(" ")[1]);
-                        //String hora=jTable2.getValueAt(jTable1.getSelectedRow(), 0).toString().split(" - ")[0])+":00";
-                    System.out.println("anyo="+anyo);
-                    System.out.println("mes="+mes);
-                    System.out.println("dia="+dia);
-                    //System.out.println("hora="+hora);
-                    cal.set(Calendar.YEAR, anyo);
-                    cal.set(Calendar.MONTH, mes);
-                    cal.set(Calendar.DAY_OF_MONTH, dia);
-                    //cal.set(Calendar.HOUR, hora);
-                    //hh.setDia(dia);
-                    //hh.setHora(hora);
+                        int dia=Integer.valueOf(jTable1.getColumnModel().getColumn(jTable1.getSelectedColumn()).getHeaderValue().toString().split(" ")[1]);
+                        int hora=(int)jTable1.getSelectedRow()/2+9;
+                        int minuto=jTable1.getSelectedRow()%2*30;
+                        int segundo=0;
+                        SimpleDateFormat sdf=new SimpleDateFormat("HH:mm:ss");
+                        cal.set(Calendar.YEAR, anyo);
+                        cal.set(Calendar.MONTH, mes);
+                        cal.set(Calendar.DAY_OF_MONTH, dia);
+                        cal.set(Calendar.HOUR_OF_DAY, hora);
+                        cal.set(Calendar.MINUTE, minuto);
+                        cal.set(Calendar.SECOND, segundo);
+                        hh.setDia(cal.getTime());
+                        hh.setHora(Time.valueOf(sdf.format(cal.getTime())));
+                        hh.setIdPersona(persona.getId());
+                        hhUI=new HhUI(null, true, hh, true);
+                    }
+                    hhUI.setVisible(true);
                 }
-                HhUI hhUI=new HhUI(null, true);
-                hhUI.setVisible(true);
             }
-        }
-    });
-    jScrollPane4.setViewportView(jTable1);
+        });
 
-    jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-    jLabel5.setText("Tarea Actual:");
+        jTable1.setPreferredScrollableViewportSize(jTable1.getPreferredSize());
+        jScrollPane4.setViewportView(jTable1);
+        jScrollPane4 = new JScrollPane(jTable1);
 
-    jTextField1.setFocusable(false);
-    jTextField1.setPreferredSize(new java.awt.Dimension(50, 20));
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel5.setText("Tarea Actual:");
 
-    jButton4.setText("<< Anterior");
-    jButton4.addActionListener(new java.awt.event.ActionListener() {
+        jTextField1.setFocusable(false);
+        jTextField1.setPreferredSize(new java.awt.Dimension(50, 20));
+
+        jButton4.setText("<< Anterior");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jButton5.setText("Siguiente >>");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(
+            new String[] { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" }));
+    jComboBox1.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
-            jButton4ActionPerformed(evt);
+            jComboBox1ActionPerformed(evt);
         }
-    });
-
-    jButton5.setText("Siguiente >>");
-    jButton5.addActionListener(new java.awt.event.ActionListener() {
-        public void actionPerformed(java.awt.event.ActionEvent evt) {
-            jButton5ActionPerformed(evt);
-        }
-    });
-
-    jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(
-        new String[] { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" }));
-jComboBox1.addActionListener(new java.awt.event.ActionListener() {
-    public void actionPerformed(java.awt.event.ActionEvent evt) {
-        jComboBox1ActionPerformed(evt);
-    }
     });
 
     int anyo=instante.get(Calendar.YEAR);
@@ -315,6 +371,11 @@ jComboBox1.addActionListener(new java.awt.event.ActionListener() {
     for(int i=0;i<10;++i)
     anyos[i]=String.valueOf(anyo-i);
     jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(anyos));
+    jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            jComboBox2ActionPerformed(evt);
+        }
+    });
 
     jButton6.setText("Generar Planilla");
     jButton6.addActionListener(new java.awt.event.ActionListener() {
@@ -680,7 +741,7 @@ jComboBox1.addActionListener(new java.awt.event.ActionListener() {
 
     private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
         // TODO add your handling code here:                 
-        ActividadDao actividadDao=new ActividadDao();
+        final ActividadDao actividadDao=new ActividadDao();
         TipoTarea tipoTarea= (TipoTarea)jList1.getSelectedValue();                   
         
         if(jList1.getSelectedValue()==null)
@@ -751,10 +812,20 @@ jComboBox1.addActionListener(new java.awt.event.ActionListener() {
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         // TODO add your handling code here:
+        if(jList3.getModel().getSize()==0)
+            return;
+        if(jList3.getSelectedValue()==null){
+            JOptionPane.showMessageDialog(null, "Debe seleccionar una actividad a eliminar");
+            return;
+        }        
         int dialogResult =JOptionPane.showConfirmDialog(null, "Al eliminar esta tarea, se eliminarán todas las HH asociadas a ella. ¿Seguro que desea eliminar la tarea?");
         if(dialogResult == JOptionPane.YES_OPTION){
             Tarea tarea=(Tarea)jList3.getSelectedValue();
-            tareaDao.delete(tarea);
+            try {
+                tareaDao.delete(tarea);
+            } catch (Exception ex) {
+                Logger.getLogger(WorkMonitorUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
             WorkMonitorUI.jList3.setModel(new javax.swing.AbstractListModel() {
                 List<Tarea> tareas=tareaDao.getByTipoTarea(jList1.getModel().getElementAt(0).toString());
                 public int getSize() { return tareas.size(); }
@@ -768,12 +839,22 @@ jComboBox1.addActionListener(new java.awt.event.ActionListener() {
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
+        if(jList1.getModel().getSize()==0)
+            return;
+        if(jList1.getSelectedValue()==null){
+            JOptionPane.showMessageDialog(null, "Debe seleccionar un tipo de tarea a eliminar");
+            return;
+        }
         int dialogResult =JOptionPane.showConfirmDialog(null, "Al eliminar este tipo de tarea, se eliminarán todas las tareas, actividades y HH asociadas a ella. ¿Seguro que desea eliminar el tipo de tarea?");
         if(dialogResult == JOptionPane.YES_OPTION){
             TipoTarea tipoTarea=(TipoTarea)jList1.getSelectedValue();
-            tipoTareaDao.delete(tipoTarea);
+            try {
+                tipoTareaDao.delete(tipoTarea);
+            } catch (Exception ex) {
+                Logger.getLogger(WorkMonitorUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
             jList1.setModel(new javax.swing.AbstractListModel() {
-                List<TipoTarea> tiposTarea=tipoTareaDao.getAll(TipoTarea.class);
+                List<TipoTarea> tiposTarea=tipoTareaDao.getByPersona(persona.getId());
                 public int getSize() { return tiposTarea.size(); }
                 public Object getElementAt(int i) { return tiposTarea.get(i); }
             });
@@ -795,18 +876,21 @@ jComboBox1.addActionListener(new java.awt.event.ActionListener() {
 
     public static void highlightDay(){
         Calendar cal=Calendar.getInstance(); 
+        int ano=cal.get(Calendar.YEAR);
         int mes=cal.get(Calendar.MONTH);
-        int sem=cal.get(Calendar.WEEK_OF_MONTH);        
+        int sem=cal.get(Calendar.WEEK_OF_MONTH);                
         
-        if(instante.get(Calendar.MONTH)==mes && instante.get(Calendar.WEEK_OF_MONTH)==sem){              
+        if(instante.get(Calendar.YEAR)==ano && instante.get(Calendar.MONTH)==mes && instante.get(Calendar.WEEK_OF_MONTH)==sem){              
            // Se le restan 2 unidades: 1 por que la semana empieza del lunes y no del domingo
            // Y otra porque el indice de la tabla empieza desde 0 y no desde 1
+           if(Arrays.asList(-1,5).contains(cal.get(Calendar.DAY_OF_WEEK)-2))
+               return;
            System.out.println("cal.get(Calendar.DAY_OF_WEEK)="+(cal.get(Calendar.DAY_OF_WEEK)-2));
-           column=jTable1.getColumnModel().getColumn(cal.get(Calendar.DAY_OF_WEEK)-2);
+           column=jTable1.getColumnModel().getColumn(cal.get(Calendar.DAY_OF_WEEK)-2);           
            column.setCellRenderer(columnRenderer);   
            column=jTable2.getColumnModel().getColumn(0);
            column.setCellRenderer(columnRenderer);   
-           System.out.println("column="+column);              
+           jTable2.repaint();                        
            //row=jTable1.
         }
     }
@@ -875,6 +959,58 @@ jComboBox1.addActionListener(new java.awt.event.ActionListener() {
         TareaActividadUI tareaActividadUI=new TareaActividadUI(null, true);
         tareaActividadUI.setVisible(true); 
     }//GEN-LAST:event_jButton12ActionPerformed
+
+    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+        // TODO add your handling code here:
+        System.out.println("instante.getTime().toString()="+instante.getTime().toString());
+        instante.setMinimalDaysInFirstWeek(3);        
+        
+        instante.set(Calendar.YEAR,Integer.valueOf(jComboBox2.getSelectedItem().toString())); 
+        
+        if(jComboBox1.getSelectedIndex()<instante.get(Calendar.MONTH)){
+            System.out.println("jComboBox1.getSelectedIndex()<instante.get(Calendar.MONTH)");
+            instante.add(Calendar.WEEK_OF_MONTH,-1);
+            instante.set(Calendar.MONTH,jComboBox1.getSelectedIndex()); 
+        }
+        if(jComboBox1.getSelectedIndex()>instante.get(Calendar.MONTH)){
+            System.out.println("jComboBox1.getSelectedIndex()>instante.get(Calendar.MONTH)");
+            instante.add(Calendar.WEEK_OF_MONTH,1);
+            instante.set(Calendar.MONTH,jComboBox1.getSelectedIndex()); 
+        }
+        
+        System.out.println("instante.get(Calendar.DAY_OF_WEEK)primero="+instante.get(Calendar.DAY_OF_WEEK)); 
+                
+        if(instante.get(Calendar.DAY_OF_WEEK)==7){
+            instante.add(Calendar.DAY_OF_WEEK, 1);
+        }
+        if(instante.get(Calendar.DAY_OF_WEEK)==1){
+            instante.add(Calendar.DAY_OF_WEEK, -2);
+        }
+            
+        System.out.println("jComboBox1.getSelectedIndex()="+jComboBox1.getSelectedIndex());                        
+        System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));                        
+        System.out.println("instante.getActualMaximum(Calendar.DAY_OF_MONTH)="+instante.getActualMaximum(Calendar.DAY_OF_MONTH));                        
+        System.out.println("instante.get(Calendar.DAY_OF_WEEK)="+instante.get(Calendar.DAY_OF_WEEK)); 
+        System.out.println("instante.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, Locale.getDefault())="+instante.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, Locale.getDefault())); 
+        System.out.println("instante.getActualMaximum(Calendar.WEEK_OF_MONTH)="+instante.getActualMaximum(Calendar.WEEK_OF_MONTH));                        
+        
+        int semanas=instante.getActualMaximum(Calendar.WEEK_OF_MONTH);                                
+        int cont=1;        
+        Hashtable<Integer, JLabel> table = new Hashtable<Integer, JLabel>();
+        
+        while(cont<=semanas){                        
+            table.put (cont, new JLabel(String.valueOf(cont)));
+            cont++;
+        }  
+                
+        System.out.println("cal.get(Calendar.DAY_OF_MONTH)="+instante.get(Calendar.DAY_OF_MONTH));
+        System.out.println("instante.get(Calendar.WEEK_OF_MONTH)="+instante.get(Calendar.WEEK_OF_MONTH));
+        jSlider1.setMaximum(semanas);                
+        jSlider1.setValue(instante.get(Calendar.WEEK_OF_MONTH)); 
+        jSlider1.setLabelTable(table);                      
+        
+        refreshTable();
+    }//GEN-LAST:event_jComboBox2ActionPerformed
 
     /**
      * @param args the command line arguments

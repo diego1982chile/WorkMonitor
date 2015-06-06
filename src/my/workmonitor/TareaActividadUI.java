@@ -5,6 +5,8 @@
  */
 package my.workmonitor;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +67,8 @@ public class TareaActividadUI extends javax.swing.JDialog {
         jButton9 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(600, 400));
+        setPreferredSize(new java.awt.Dimension(600, 400));
 
         jLabel1.setBackground(new java.awt.Color(123, 153, 172));
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -98,7 +102,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel3.setText("Actividades x Tipo");
 
-        ActividadDao actividadDao=new ActividadDao();
+        final ActividadDao actividadDao=new ActividadDao();
         jList2.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jList2.setModel(new javax.swing.AbstractListModel() {
             List<Actividad> actividades=new ArrayList<Actividad>();
@@ -109,6 +113,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
         jScrollPane3.setViewportView(jList2);
 
         jButton1.setText("<<");
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -130,6 +135,16 @@ public class TareaActividadUI extends javax.swing.JDialog {
             List<Actividad> actividades=actividadDao.getByPersona(WorkMonitorUI.persona.getId());
             public int getSize() { return actividades.size(); }
             public Object getElementAt(int i) { return actividades.get(i); }
+        });
+        jList3.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent me) {
+                if (me.getClickCount() == 2) {
+                    if(jList3.getModel().getSize()==0)
+                    return;
+                    ActividadUI actividadUI=new ActividadUI(null, true, (Actividad)jList3.getSelectedValue());
+                    actividadUI.setVisible(true);
+                }
+            }
         });
         jList3.setFocusable(false);
         jScrollPane4.setViewportView(jList3);
@@ -174,8 +189,8 @@ public class TareaActividadUI extends javax.swing.JDialog {
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING)))
+                            .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -206,10 +221,10 @@ public class TareaActividadUI extends javax.swing.JDialog {
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap(116, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jScrollPane4)
                             .addComponent(jScrollPane2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -229,7 +244,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
 
     private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
         // TODO add your handling code here:
-        ActividadDao actividadDao=new ActividadDao();
+        final ActividadDao actividadDao=new ActividadDao();
         TipoTarea tipoTarea= (TipoTarea)jList1.getSelectedValue();
 
         if(jList1.getSelectedValue()==null)
@@ -372,10 +387,17 @@ public class TareaActividadUI extends javax.swing.JDialog {
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         // TODO add your handling code here:
+        if(jList3.getModel().getSize()==0)
+            return;
+        
         int dialogResult =JOptionPane.showConfirmDialog(null, "Al eliminar esta actividad, se eliminarán todas las HH asociadas a ella. ¿Seguro que desea eliminar la actividad?");
         if(dialogResult == JOptionPane.YES_OPTION){
             Actividad actividad=(Actividad)jList3.getSelectedValue();
-            actividadDao.delete(actividad);
+            try {
+                actividadDao.delete(actividad);
+            } catch (Exception ex) {
+                Logger.getLogger(TareaActividadUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
             TareaActividadUI.jList3.setModel(new javax.swing.AbstractListModel() {
                 List<Actividad> actividades=actividadDao.getByPersona(WorkMonitorUI.persona.getId());
                 public int getSize() { return actividades.size(); }

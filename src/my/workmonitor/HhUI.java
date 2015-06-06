@@ -5,11 +5,22 @@
  */
 package my.workmonitor;
 
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import my.dao.ActividadDao;
+import my.dao.HhDao;
 import my.dao.TareaActividadDao;
 import my.dao.TareaDao;
 import my.dao.TipoTareaDao;
+import my.entity.Actividad;
+import my.entity.Hh;
+import my.entity.Tarea;
 import my.entity.TipoTarea;
 import static my.workmonitor.WorkMonitorUI.jList1;
 
@@ -22,13 +33,51 @@ public class HhUI extends javax.swing.JDialog {
     private static TipoTareaDao tipoTareaDao= new TipoTareaDao();
     private static TareaDao tareaDao= new TareaDao(); 
     private static ActividadDao actividadDao= new ActividadDao(); 
-    private static TareaActividadDao tareaActividadDao= new TareaActividadDao();    
+    private static TareaActividadDao tareaActividadDao= new TareaActividadDao();  
+    private static HhDao hhDao= new HhDao(); 
+    private Hh hh; 
+    private boolean nueva;
+    SimpleDateFormat sdf=new SimpleDateFormat("EEEE d, MMMM yyyy");    
+    SimpleDateFormat sdf2=new SimpleDateFormat("HH:mm");  
     /**
      * Creates new form HhUI
      */
     public HhUI(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        jButton2.setVisible(false);
+    }
+    
+    public HhUI(java.awt.Frame parent, boolean modal, Hh hh, boolean nueva) {                        
+        super(parent, modal);
+        initComponents();
+        jLabel7.setText(sdf.format(hh.getDia()).toUpperCase());
+        this.hh=hh;
+        String hora=sdf2.format(hh.getHora()).split(":")[0];
+        String min=sdf2.format(hh.getHora()).split(":")[1];
+        if(min.equals("00"))
+            min="30";        
+        else{
+            min="00";
+            int hour=Integer.valueOf(hora);
+            hour++;
+            hora=String.valueOf(hour);
+        }
+        jLabel8.setText(sdf2.format(hh.getHora()).toUpperCase()+" - "+hora+":"+min);
+        this.nueva=nueva;
+        if(nueva){
+            jLabel4.setText(" Nueva HH");
+            jButton1.setText("Crear");
+            jButton2.setVisible(false);
+        }
+        else{
+            jLabel4.setText(" HH Actual");
+            jButton1.setText("Modificar");
+            jComboBox1.setSelectedItem(hh.getTarea().getTipoTarea());
+            jComboBox2.setSelectedItem(hh.getTarea());
+            jComboBox3.setSelectedItem(hh.getActividad());
+            jButton2.setVisible(true);
+        }        
     }
 
     /**
@@ -48,8 +97,16 @@ public class HhUI extends javax.swing.JDialog {
         jComboBox3 = new javax.swing.JComboBox();
         jButton1 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(280, 300));
+        setMinimumSize(new java.awt.Dimension(280, 300));
+        setPreferredSize(new java.awt.Dimension(280, 300));
 
         jComboBox1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(
@@ -84,6 +141,11 @@ public class HhUI extends javax.swing.JDialog {
     );
 
     jButton1.setText("Aceptar");
+    jButton1.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            jButton1ActionPerformed(evt);
+        }
+    });
 
     jLabel4.setBackground(new java.awt.Color(123, 153, 172));
     jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -91,35 +153,64 @@ public class HhUI extends javax.swing.JDialog {
     jLabel4.setText(" Crear/Modificar HH");
     jLabel4.setOpaque(true);
 
+    jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+    jLabel5.setText("Día:");
+
+    jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+    jLabel6.setText("Hora:");
+
+    jLabel7.setText(" ");
+
+    jLabel8.setText(" ");
+
+    jButton2.setText("Eliminar");
+    jButton2.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            jButton2ActionPerformed(evt);
+        }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
         .addGroup(layout.createSequentialGroup()
+            .addGap(18, 18, 18)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addComponent(jLabel2)
+                .addComponent(jLabel1)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel5)
+                .addComponent(jLabel6))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(18, 18, 18)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jLabel2)
-                        .addComponent(jLabel1)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jComboBox3, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(87, 87, 87)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGap(25, 25, 25)))
+                .addComponent(jComboBox3, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGap(63, 63, 63))
+        .addGroup(layout.createSequentialGroup()
+            .addGap(35, 35, 35)
+            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
     layout.setVerticalGroup(
         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(layout.createSequentialGroup()
             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(18, 18, 18)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jLabel5)
+                .addComponent(jLabel7))
+            .addGap(18, 18, 18)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jLabel6)
+                .addComponent(jLabel8))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(jLabel1))
@@ -132,8 +223,10 @@ public class HhUI extends javax.swing.JDialog {
                 .addComponent(jLabel3)
                 .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(18, 18, 18)
-            .addComponent(jButton1)
-            .addContainerGap(22, Short.MAX_VALUE))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jButton1)
+                .addComponent(jButton2))
+            .addGap(20, 20, 20))
     );
 
     pack();
@@ -150,6 +243,78 @@ public class HhUI extends javax.swing.JDialog {
             )
         );
     }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        List<TipoTarea> tiposTarea=tipoTareaDao.getByPersonaNombre(WorkMonitorUI.persona.getId(),jComboBox1.getSelectedItem().toString());            
+        List<Tarea> tareas=tareaDao.getByPersonaNombre(WorkMonitorUI.persona.getId(),jComboBox2.getSelectedItem().toString());
+        List<Actividad> actividades=actividadDao.getByPersonaNombre(WorkMonitorUI.persona.getId(),jComboBox3.getSelectedItem().toString());
+        
+        if(tiposTarea.size()==0){
+            JOptionPane.showMessageDialog(null, "No existe un tipo de tarea con este nombre para esta persona");
+            return;
+        }
+        if(tiposTarea.size()>1){
+            JOptionPane.showMessageDialog(null, "Existe más de un tipo de tarea con este nombre para esta persona");
+            return;                
+        }
+        if(tareas.size()==0){
+            JOptionPane.showMessageDialog(null, "No existe una tarea con este nombre para esta persona");
+            return;
+        }        
+        if(tareas.size()>1){
+            JOptionPane.showMessageDialog(null, "Existe más de una tarea con este nombre para esta persona");
+            return;                
+        }        
+        if(actividades.size()==0){
+            JOptionPane.showMessageDialog(null, "No existe una actividad con este nombre para esta persona");
+            return;
+        }
+        if(actividades.size()>1){
+            JOptionPane.showMessageDialog(null, "Existe más de una actividad con este nombre para esta persona");
+            return;                
+        }             
+        hh.setTarea(tareas.get(0));
+        hh.setIdTarea(tareas.get(0).getId());
+        hh.setActividad(actividades.get(0));
+        hh.setIdActividad(actividades.get(0).getId());
+        if(nueva){            
+            try {
+                if(hhDao.save(hh)==(Serializable)0){
+                    JOptionPane.showMessageDialog(null, "Error al ingresar la hh. No se ha podido ingresar"); 
+                    return;
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(HhUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            JOptionPane.showMessageDialog(null, "La hh se ha ingresado correctamente");   
+            WorkMonitorUI.refreshTable();
+            this.dispose();
+        }
+        else{                          
+            try {                           
+                hhDao.update(hh);
+            } catch (Exception ex) {
+                Logger.getLogger(HhUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            JOptionPane.showMessageDialog(null, "La hh se ha modificado correctamente");   
+            WorkMonitorUI.refreshTable();
+            this.dispose();
+        }                
+        return;          
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        try {
+            // TODO add your handling code here:
+            hhDao.delete(hh);
+        } catch (Exception ex) {
+            Logger.getLogger(HhUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        JOptionPane.showMessageDialog(null, "La hh se ha eliminado correctamente");   
+        WorkMonitorUI.refreshTable();
+        this.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -195,6 +360,7 @@ public class HhUI extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
     private javax.swing.JComboBox jComboBox3;
@@ -202,5 +368,9 @@ public class HhUI extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     // End of variables declaration//GEN-END:variables
 }
