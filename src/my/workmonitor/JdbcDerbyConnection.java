@@ -35,7 +35,7 @@ public class JdbcDerbyConnection {
             Connection conn = DriverManager.getConnection(dbURL, properties);                        
             
             if (conn != null) {
-                System.out.println("Connected to database");                
+                //System.out.println("Connected to database");                
                 /*
                 ResultSet rs=conn.prepareStatement("select * from app.hh").executeQuery();
                 try{

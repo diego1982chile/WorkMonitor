@@ -315,7 +315,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Debe seleccionar al menos una actividad para asociar a un tipo de tarea");
             return;
         }
-        
+        /*
         for(int i=0;i<actividades.size();++i)
             System.out.println("actividades.get(i).getNombre()="+actividades.get(i).getNombre());
 
@@ -323,6 +323,7 @@ public class TareaActividadUI extends javax.swing.JDialog {
             System.out.println("actividadesPorTarea.get(i).getNombre()="+actividadesPorTareas.get(i).getNombre());        
         
         System.out.println("actividadesPorTareas.size()1="+actividadesPorTareas.size());
+        */
         
         boolean interseccion=!actividadesPorTareas.retainAll(actividades);
         

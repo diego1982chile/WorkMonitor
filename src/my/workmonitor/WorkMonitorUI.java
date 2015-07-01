@@ -278,7 +278,7 @@ public class WorkMonitorUI extends javax.swing.JFrame {
             hhDao.getBySemana(persona.getId(),instante.getTime())
             ,
             new String [] {
-                "Lunes"+dias[0],
+                "Lunes "+dias[0],
                 "Martes "+dias[1],
                 "Miércoles "+dias[2],
                 "Jueves "+dias[3],
@@ -517,6 +517,17 @@ public class WorkMonitorUI extends javax.swing.JFrame {
     jSlider1.setPaintLabels(true);
     jSlider1.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 10));
     jSlider1.setFocusable(false);
+    jSlider1.setRequestFocusEnabled(false);
+    jSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
+        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+            jSlider1StateChanged(evt);
+        }
+    });
+    jSlider1.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            jSlider1MouseClicked(evt);
+        }
+    });
 
     jButton12.setText("↑↓");
     jButton12.setMargin(new java.awt.Insets(0, 0, 0, 0));
@@ -674,23 +685,23 @@ public class WorkMonitorUI extends javax.swing.JFrame {
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // TODO add your handling code here:    
-        System.out.println("instante.getTime().toString()="+instante.getTime().toString());
+        //System.out.println("instante.getTime().toString()="+instante.getTime().toString());
         instante.setMinimalDaysInFirstWeek(3);        
         
         instante.set(Calendar.MONTH,jComboBox1.getSelectedIndex()); 
         
         if(jComboBox1.getSelectedIndex()<instante.get(Calendar.MONTH)){
-            System.out.println("jComboBox1.getSelectedIndex()<instante.get(Calendar.MONTH)");
+            //System.out.println("jComboBox1.getSelectedIndex()<instante.get(Calendar.MONTH)");
             instante.add(Calendar.WEEK_OF_MONTH,-1);
             instante.set(Calendar.MONTH,jComboBox1.getSelectedIndex()); 
         }
         if(jComboBox1.getSelectedIndex()>instante.get(Calendar.MONTH)){
-            System.out.println("jComboBox1.getSelectedIndex()>instante.get(Calendar.MONTH)");
+            //System.out.println("jComboBox1.getSelectedIndex()>instante.get(Calendar.MONTH)");
             instante.add(Calendar.WEEK_OF_MONTH,1);
             instante.set(Calendar.MONTH,jComboBox1.getSelectedIndex()); 
         }
         
-        System.out.println("instante.get(Calendar.DAY_OF_WEEK)primero="+instante.get(Calendar.DAY_OF_WEEK)); 
+        //System.out.println("instante.get(Calendar.DAY_OF_WEEK)primero="+instante.get(Calendar.DAY_OF_WEEK)); 
                 
         if(instante.get(Calendar.DAY_OF_WEEK)==7){
             instante.add(Calendar.DAY_OF_WEEK, 1);
@@ -699,12 +710,12 @@ public class WorkMonitorUI extends javax.swing.JFrame {
             instante.add(Calendar.DAY_OF_WEEK, -2);
         }
             
-        System.out.println("jComboBox1.getSelectedIndex()="+jComboBox1.getSelectedIndex());                        
-        System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));                        
-        System.out.println("instante.getActualMaximum(Calendar.DAY_OF_MONTH)="+instante.getActualMaximum(Calendar.DAY_OF_MONTH));                        
-        System.out.println("instante.get(Calendar.DAY_OF_WEEK)="+instante.get(Calendar.DAY_OF_WEEK)); 
-        System.out.println("instante.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, Locale.getDefault())="+instante.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, Locale.getDefault())); 
-        System.out.println("instante.getActualMaximum(Calendar.WEEK_OF_MONTH)="+instante.getActualMaximum(Calendar.WEEK_OF_MONTH));                        
+        //System.out.println("jComboBox1.getSelectedIndex()="+jComboBox1.getSelectedIndex());                        
+        //System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));                        
+        //System.out.println("instante.getActualMaximum(Calendar.DAY_OF_MONTH)="+instante.getActualMaximum(Calendar.DAY_OF_MONTH));                        
+        //System.out.println("instante.get(Calendar.DAY_OF_WEEK)="+instante.get(Calendar.DAY_OF_WEEK)); 
+        //System.out.println("instante.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, Locale.getDefault())="+instante.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, Locale.getDefault())); 
+        //System.out.println("instante.getActualMaximum(Calendar.WEEK_OF_MONTH)="+instante.getActualMaximum(Calendar.WEEK_OF_MONTH));                        
         
         int semanas=instante.getActualMaximum(Calendar.WEEK_OF_MONTH);                                
         int cont=1;        
@@ -715,8 +726,8 @@ public class WorkMonitorUI extends javax.swing.JFrame {
             cont++;
         }  
                 
-        System.out.println("cal.get(Calendar.DAY_OF_MONTH)="+instante.get(Calendar.DAY_OF_MONTH));
-        System.out.println("instante.get(Calendar.WEEK_OF_MONTH)="+instante.get(Calendar.WEEK_OF_MONTH));
+        //System.out.println("cal.get(Calendar.DAY_OF_MONTH)="+instante.get(Calendar.DAY_OF_MONTH));
+        //System.out.println("instante.get(Calendar.WEEK_OF_MONTH)="+instante.get(Calendar.WEEK_OF_MONTH));
         jSlider1.setMaximum(semanas);                
         jSlider1.setValue(instante.get(Calendar.WEEK_OF_MONTH)); 
         jSlider1.setLabelTable(table);                      
@@ -878,15 +889,16 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         Calendar cal=Calendar.getInstance(); 
         int ano=cal.get(Calendar.YEAR);
         int mes=cal.get(Calendar.MONTH);
-        int sem=cal.get(Calendar.WEEK_OF_MONTH);                
+        int sem=cal.get(Calendar.WEEK_OF_MONTH);                  
         
         if(instante.get(Calendar.YEAR)==ano && instante.get(Calendar.MONTH)==mes && instante.get(Calendar.WEEK_OF_MONTH)==sem){              
            // Se le restan 2 unidades: 1 por que la semana empieza del lunes y no del domingo
-           // Y otra porque el indice de la tabla empieza desde 0 y no desde 1
+           // Y otra porque el indice de la tabla empieza desde 0 y no desde 1           
            if(Arrays.asList(-1,5).contains(cal.get(Calendar.DAY_OF_WEEK)-2))
-               return;
+               return;                      
            System.out.println("cal.get(Calendar.DAY_OF_WEEK)="+(cal.get(Calendar.DAY_OF_WEEK)-2));
-           column=jTable1.getColumnModel().getColumn(cal.get(Calendar.DAY_OF_WEEK)-2);           
+           column=jTable1.getColumnModel().getColumn(cal.get(Calendar.DAY_OF_WEEK)-2); 
+           System.out.println("column.getModelIndex()="+column.getModelIndex());
            column.setCellRenderer(columnRenderer);   
            column=jTable2.getColumnModel().getColumn(0);
            column.setCellRenderer(columnRenderer);   
@@ -901,50 +913,54 @@ public class WorkMonitorUI extends javax.swing.JFrame {
               // Here, we can safely update the GUI
               // because we'll be called from the
               // event dispatch thread
-            instante.add(Calendar.DAY_OF_MONTH, -instante.get(Calendar.DAY_OF_WEEK)+2);
-            int[] dias=new int[5];
-            for(int i=0;i<5;++i){
-                System.out.println("cal.get(Calendar.DAY_OF_MONTH)="+instante.get(Calendar.DAY_OF_MONTH));
-                dias[i]=instante.get(Calendar.DAY_OF_MONTH);
-                instante.add(Calendar.DAY_OF_MONTH, 1);
-            }            
-            jTable1.setModel(new javax.swing.table.DefaultTableModel(                  
-                hhDao.getBySemana(persona.getId(),instante.getTime())
-                ,
-                new String [] {
-                    "Lunes "+dias[0],
-                    "Martes "+dias[1],
-                    "Miércoles "+dias[2],
-                    "Jueves "+dias[3],
-                    "Viernes "+dias[4]
-                }                  
-            ));               
-            for(int i=0;i<jTable1.getColumnModel().getColumnCount();++i){                
-                jTable1.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);                
-                ((DefaultTableCellRenderer)jTable1.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
-                Class<?> col_class = jTable1.getColumnClass(i);
-                jTable1.setDefaultEditor(col_class, null); 
-            }
-            highlightDay();     
+                instante.add(Calendar.DAY_OF_MONTH, -instante.get(Calendar.DAY_OF_WEEK)+2);
+                int[] dias=new int[5];                
+                for(int i=0;i<5;++i){                    
+                    dias[i]=instante.get(Calendar.DAY_OF_MONTH);
+                    instante.add(Calendar.DAY_OF_MONTH, 1);
+                }
+                
+                jTable1.setModel(new javax.swing.table.DefaultTableModel(                  
+                    hhDao.getBySemana(persona.getId(),instante.getTime())
+                    ,
+                    new String [] {
+                        "Lunes "+dias[0],
+                        "Martes "+dias[1],
+                        "Miércoles "+dias[2],
+                        "Jueves "+dias[3],
+                        "Viernes "+dias[4]
+                    }                  
+                ));                                                    
+                
+                if(Calendar.getInstance().get(Calendar.MONTH)<instante.get(Calendar.MONTH))                    
+                    instante.add(Calendar.DAY_OF_MONTH, -instante.get(Calendar.DAY_OF_MONTH));                                                     
+                
+                for(int i=0;i<jTable1.getColumnModel().getColumnCount();++i){                
+                    jTable1.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);                
+                    ((DefaultTableCellRenderer)jTable1.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
+                    Class<?> col_class = jTable1.getColumnClass(i);
+                    jTable1.setDefaultEditor(col_class, null); 
+                }            
+                highlightDay();     
             }
         });           
     }
     
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:        
-        System.out.println("instante.getTime().toString()="+instante.getTime().toString());
+        //System.out.println("instante.getTime().toString()="+instante.getTime().toString());
         if(jSlider1.getValue()==jSlider1.getMinimum()){
             JOptionPane.showMessageDialog(null, "No existen más semanas para este mes. Seleccione el mes anterior");            
             return;
         }        
-        instante.add(Calendar.WEEK_OF_MONTH, -1);
+        instante.add(Calendar.WEEK_OF_MONTH, -1);        
         jSlider1.setValue(jSlider1.getValue()-1);
         refreshTable();            
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:            
-        System.out.println("instante.getTime().toString()="+instante.getTime().toString());
+        //System.out.println("instante.getTime().toString()="+instante.getTime().toString());
         if(jSlider1.getValue()==jSlider1.getMaximum()){
             JOptionPane.showMessageDialog(null, "No existen más semanas para este mes. Seleccione el mes anterior");            
             return;
@@ -962,23 +978,23 @@ public class WorkMonitorUI extends javax.swing.JFrame {
 
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
         // TODO add your handling code here:
-        System.out.println("instante.getTime().toString()="+instante.getTime().toString());
+        //System.out.println("instante.getTime().toString()="+instante.getTime().toString());
         instante.setMinimalDaysInFirstWeek(3);        
         
         instante.set(Calendar.YEAR,Integer.valueOf(jComboBox2.getSelectedItem().toString())); 
         
         if(jComboBox1.getSelectedIndex()<instante.get(Calendar.MONTH)){
-            System.out.println("jComboBox1.getSelectedIndex()<instante.get(Calendar.MONTH)");
+            //System.out.println("jComboBox1.getSelectedIndex()<instante.get(Calendar.MONTH)");
             instante.add(Calendar.WEEK_OF_MONTH,-1);
             instante.set(Calendar.MONTH,jComboBox1.getSelectedIndex()); 
         }
         if(jComboBox1.getSelectedIndex()>instante.get(Calendar.MONTH)){
-            System.out.println("jComboBox1.getSelectedIndex()>instante.get(Calendar.MONTH)");
+            //System.out.println("jComboBox1.getSelectedIndex()>instante.get(Calendar.MONTH)");
             instante.add(Calendar.WEEK_OF_MONTH,1);
             instante.set(Calendar.MONTH,jComboBox1.getSelectedIndex()); 
         }
         
-        System.out.println("instante.get(Calendar.DAY_OF_WEEK)primero="+instante.get(Calendar.DAY_OF_WEEK)); 
+        //System.out.println("instante.get(Calendar.DAY_OF_WEEK)primero="+instante.get(Calendar.DAY_OF_WEEK)); 
                 
         if(instante.get(Calendar.DAY_OF_WEEK)==7){
             instante.add(Calendar.DAY_OF_WEEK, 1);
@@ -987,12 +1003,12 @@ public class WorkMonitorUI extends javax.swing.JFrame {
             instante.add(Calendar.DAY_OF_WEEK, -2);
         }
             
-        System.out.println("jComboBox1.getSelectedIndex()="+jComboBox1.getSelectedIndex());                        
-        System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));                        
-        System.out.println("instante.getActualMaximum(Calendar.DAY_OF_MONTH)="+instante.getActualMaximum(Calendar.DAY_OF_MONTH));                        
-        System.out.println("instante.get(Calendar.DAY_OF_WEEK)="+instante.get(Calendar.DAY_OF_WEEK)); 
-        System.out.println("instante.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, Locale.getDefault())="+instante.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, Locale.getDefault())); 
-        System.out.println("instante.getActualMaximum(Calendar.WEEK_OF_MONTH)="+instante.getActualMaximum(Calendar.WEEK_OF_MONTH));                        
+        //System.out.println("jComboBox1.getSelectedIndex()="+jComboBox1.getSelectedIndex());                        
+        //System.out.println("instante.get(Calendar.MONTH)="+instante.get(Calendar.MONTH));                        
+        //System.out.println("instante.getActualMaximum(Calendar.DAY_OF_MONTH)="+instante.getActualMaximum(Calendar.DAY_OF_MONTH));                        
+        //System.out.println("instante.get(Calendar.DAY_OF_WEEK)="+instante.get(Calendar.DAY_OF_WEEK)); 
+        //System.out.println("instante.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, Locale.getDefault())="+instante.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, Locale.getDefault())); 
+        //System.out.println("instante.getActualMaximum(Calendar.WEEK_OF_MONTH)="+instante.getActualMaximum(Calendar.WEEK_OF_MONTH));                        
         
         int semanas=instante.getActualMaximum(Calendar.WEEK_OF_MONTH);                                
         int cont=1;        
@@ -1011,6 +1027,17 @@ public class WorkMonitorUI extends javax.swing.JFrame {
         
         refreshTable();
     }//GEN-LAST:event_jComboBox2ActionPerformed
+
+    private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
+        // TODO add your handling code here:        
+        //instante.add(Calendar.WEEK_OF_MONTH, -1);        
+        //jSlider1.setValue(jSlider1.getValue()-1);
+        refreshTable();  
+    }//GEN-LAST:event_jSlider1StateChanged
+
+    private void jSlider1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider1MouseClicked
+        // TODO add your handling code here:        
+    }//GEN-LAST:event_jSlider1MouseClicked
 
     /**
      * @param args the command line arguments

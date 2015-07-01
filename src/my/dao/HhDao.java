@@ -147,7 +147,7 @@ public class HhDao {
     
     public <T> Object[][] getBySemana(Integer idPersona, final Date fecha) {
       //final Session session = sessionFactory.getCurrentSession();     
-      System.out.println("fecha="+fecha);
+      //System.out.println("fecha="+fecha);
       Calendar c1 = Calendar.getInstance();
       Calendar c2 = Calendar.getInstance();
       c1.setTime(fecha);
@@ -235,7 +235,7 @@ public class HhDao {
       SimpleDateFormat sdfDia=new SimpleDateFormat("yyyy-MM-dd");      
       SimpleDateFormat sdfHora=new SimpleDateFormat("HH:mm:ss");  
       
-      System.out.println("cal.getActualMaximum(Calendar.DAY_OF_MONTH)4="+hora.getActualMaximum(Calendar.DAY_OF_MONTH));     
+      //System.out.println("cal.getActualMaximum(Calendar.DAY_OF_MONTH)4="+hora.getActualMaximum(Calendar.DAY_OF_MONTH));     
       
       dia.add(Calendar.MONTH,1);
       dia.set(Calendar.DAY_OF_MONTH,1);
@@ -251,11 +251,11 @@ public class HhDao {
             Hh hh=new Hh();
             hh.setDia(dia.getTime());
             hh.setHora(Time.valueOf(sdfHora.format(hora.getTime())));
-            System.out.println("sdfDia.format(hh.getDia())="+sdfDia.format(hh.getDia()));            
-            System.out.println("sdfHora.format(hora.getTime())="+sdfHora.format(hh.getHora()));
+            //System.out.println("sdfDia.format(hh.getDia())="+sdfDia.format(hh.getDia()));            
+            //System.out.println("sdfHora.format(hora.getTime())="+sdfHora.format(hh.getHora()));
             int indice;            
             if((indice=result.indexOf(hh))!=-1){               
-                System.out.println("ENCONTRE");
+                //System.out.println("ENCONTRE");
                 matrizHh[i][j]=result.get(indice);                                
             }
             else

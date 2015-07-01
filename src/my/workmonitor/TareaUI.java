@@ -93,6 +93,7 @@ public class TareaUI extends javax.swing.JDialog {
         jLabel3.setAlignmentX(0.5F);
 
         jTextArea1.setColumns(20);
+        jTextArea1.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 

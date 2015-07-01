@@ -45,8 +45,7 @@ public class LoginUI extends javax.swing.JDialog {
         
         initComponents();
         addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                System.out.println("aaaaaaaa");
+            public void keyPressed(java.awt.event.KeyEvent evt) {                
                 if(evt.getKeyCode()==KeyEvent.VK_ENTER)            
                     jButton1.doClick();
             }
@@ -226,11 +225,13 @@ public class LoginUI extends javax.swing.JDialog {
         }
         if(personas.size()==1){
             workMonitorUI=new WorkMonitorUI(personas.get(0).getId());
-            this.setEnabled(false);            
+            this.setEnabled(false); 
+            this.setVisible(false);
             workMonitorUI.setVisible(true);            
             workMonitorUI.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
                     setEnabled(true);
+                    setVisible(true);
                     requestFocus();
                 }
             });

@@ -27,7 +27,7 @@ public class TareaActividadDao {
         try {
             tx = session.beginTransaction();                
             identity=session.save(o);          
-            System.out.println("identity="+identity);
+            //System.out.println("identity="+identity);
             tx.commit();
         }
         catch (Exception e) {

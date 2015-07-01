@@ -78,7 +78,7 @@ public class CellHighlighterRenderer extends DefaultTableCellRenderer {
         cal.set(Calendar.SECOND,0);
 
         SimpleDateFormat sdf=new SimpleDateFormat("HH:mm:ss");                        
-        System.out.println(Time.valueOf(sdf.format(cal.getTime())));
+        //System.out.println(Time.valueOf(sdf.format(cal.getTime())));
         hora=horas.get(sdf.format(cal.getTime()));     
     }        
     

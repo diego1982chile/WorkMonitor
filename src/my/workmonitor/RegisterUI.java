@@ -33,8 +33,7 @@ public class RegisterUI extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                System.out.println("aaaaaaaa");
+            public void keyPressed(java.awt.event.KeyEvent evt) {                
                 if(evt.getKeyCode()==KeyEvent.VK_ENTER)            
                     jButton1.doClick();
             }
